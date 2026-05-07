@@ -1,6 +1,6 @@
 <div align="center">
 
-#Ctrlc gaussian splatting
+## Ctrlc gaussian splatting
  
 ## Installation
 
