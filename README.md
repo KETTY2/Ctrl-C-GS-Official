@@ -1,39 +1,10 @@
 <div align="center">
 
-# EnvGS: Modeling View-Dependent Appearance with Environment Gaussian
-
-[**Tao Xie***](https://github.com/xbillowy) · [**Xi Chen***](https://github.com/Burningdust21) · [**Zhen Xu**](https://zhenx.me) · [**Yiman Xie**](https://zju3dv.github.io/envgs) · [**Yudong Jin**](https://github.com/krahets)
-<br>
-[**Yujun Shen**](https://shenyujun.github.io) · [**Sida Peng**](https://pengsida.net) · [**Hujun Bao**](http://www.cad.zju.edu.cn/home/bao) · [**Xiaowei Zhou**](https://xzhou.me)<sup>&dagger;</sup> 
-<br>
-
-[![arXiv](https://img.shields.io/badge/arXiv-EnvGS-b31b1b?logo=arxiv&logoColor=b31b1b)](https://arxiv.org/abs/2412.15215)
-[![Safari](https://img.shields.io/badge/Project_Page-EnvGS-green?logo=safari&logoColor=fff)](https://zju3dv.github.io/envgs)
-[![Google Drive](https://img.shields.io/badge/Drive-Dataset-4285F4?logo=googledrive&logoColor=fff)](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing)
-[![Google Drive](https://img.shields.io/badge/Drive-Checkpoint-orange?logo=googledrive&logoColor=fff)](https://drive.google.com/drive/folders/1p3bohsSSVf1mP3K26Sy47nm1Fl_YvE7I?usp=sharing)
-</div>
-
-
-***News***:
-
-- 25.03.30: We fix the submodule bugs and make the installation smoother, just follow the instructions, no other extra dependencies are needed.
-- 25.03.22: The training and evaluation code of [*EnvGS*](https://zju3dv.github.io/envgs) has been released.
-- 25.02.27: [*EnvGS*](https://zju3dv.github.io/envgs) has been accepted to CVPR 2025.
-- 25.01.07: The [*2D Gaussian Tracer*](https://github.com/xbillowy/diff-surfel-tracing) for [*EnvGS*](https://zju3dv.github.io/envgs) has been open-sourced.
-
-
-![teaser](assets/imgs/envgs.png)
-
-https://github.com/xbillowy/assets/diff-surfel-tracing/assets/0259a959-5de2-4cec-bc8d-571209d1ffce
-
-https://github.com/xbillowy/assets/diff-surfel-tracing/assets/23b365d1-65a7-46c3-9462-d07e2473a252
-
-https://github.com/xbillowy/assets/diff-surfel-tracing/assets/1d9af444-49e6-4576-8391-c292cad4d9be
-
+#Ctrlc gaussian splatting
 
 ## Installation
 
-This repository is built on top of [***EasyVolcap***](https://github.com/zju3dv/EasyVolcap), you can follow the instructions below for the basic installation of ***EasyVolcap***, these instructions are well-tested and should work on most systems.
+This repository is built on top of [***EasyVolcap***](https://github.com/zju3dv/EasyVolcap), and [***EnvGS***](https://github.com/zju3dv/EnvGS) 
 
 ```shell
 # Create a new conda environment
