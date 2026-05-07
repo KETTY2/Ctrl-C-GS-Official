@@ -8,7 +8,7 @@ This repository is built on top of [***EasyVolcap***](https://github.com/zju3dv/
 
 ```shell
 # Create a new conda environment
-conda create -n envgs "python=3.11" -y
+conda env create -f environment.yml
 conda activate envgs
 
 # Install PyTorch
@@ -17,44 +17,25 @@ conda activate envgs
 # NOTE: for avoiding any mismatch when installing other dependencies like Pytorch3D
 pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu118  # change the CUDA version according to your own CUDA version
 
-# Install basic pip dependencies
-cat requirements.txt | sed -e '/^\s*-.*$/d' -e '/^\s*#.*$/d' -e '/^\s*$/d' | awk '{split($0, a, "#"); if (length(a) > 1) print a[1]; else print $0;}' | awk '{split($0, a, "@"); if (length(a) > 1) print a[2]; else print $0;}' | xargs -n 1 pip install
-# Install development pip dependencies
-cat requirements-dev.txt | sed -e '/^\s*-.*$/d' -e '/^\s*#.*$/d' -e '/^\s*$/d' | awk '{split($0, a, "#"); if (length(a) > 1) print a[1]; else print $0;}' | awk '{split($0, a, "@"); if (length(a) > 1) print a[2]; else print $0;}' | xargs -n 1 pip install # use this for full dependencies
-
 # Register EasyVolcp for imports
 pip install -e . --no-build-isolation --no-deps
 ```
 
-Please refer to the [installation guide of ***EasyVolcap***](https://github.com/zju3dv/EasyVolcap/tree/main/readme.md#installation) for more detailed instructions.
-
-After setting up the basic environment, install the additional dependencies for *EnvGS*.
-
-NOTE: We have fixed the missing dependencies issues and potential bugs in the submodules, you can now simply install the dependencies by running the following command, no any extra dependencies are needed:
-
 ```shell
-# Clone the submodules
-git submodule update --init --recursive
 
 # Install the 2D Gaussian Tracer
-pip install -v submodules/diff-surfel-tracing  # use `-v` for verbose output
+pip install -v submodules/diff-surfel-tracing --no-build-isolation 
 
 # Install the modified 2D Gaussian rasterizers
-pip install submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet-ch05 submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet-ch07
+pip install submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet-ch05 --no-build-isolation
 ```
-
-Finally, you may want to install the dependencies of the [StableNormal](https://github.com/Stable-X/StableNormal) to prepare monocular normal maps for your custom dataset, you can simply install the dependencies by running the following command:
-
-```shell
-sh submodules/StableNormal/setup.sh
-```
-
 
 ## Datasets
 
-In this section, we provide instructions on downloading the full dataset for *Ref-NeRF*, *NeRF-Casting*, and our *EnvGS* dataset. You can download our pre-processed ***EasyVolcap*** format datasets in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). For the *EnvGS* dataset, we also provide the raw ***COLMAP*** format.
+In this section, we provide instructions on downloading the full dataset for *Ref-NeRF* sedan. You can download our pre-processed ***EasyVolcap*** format datasets in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). 
+After downloading, the extracted files should be placed at data/datasets/refnerf/ref_real/sedan/
 
-***EnvGS*** follows the typical dataset setup of ***EasyVolcap***, where we group similar sequences into sub-directories of a particular dataset. Inside those sequences, the directory structure should generally remain the same. For example, after downloading and preparing the `sedan` sequence of the *Ref-Real* dataset, the directory structure should look like this:
+***Ctrl-C*** follows the typical dataset setup of ***EasyVolcap***, where we group similar sequences into sub-directories of a particular dataset. Inside those sequences, the directory structure should generally remain the same. For example, after downloading and preparing the `sedan` sequence of the *Ref-Real* dataset, the directory structure should look like this:
 
 ```shell
 # data/datasets/ref_real/sedan:
@@ -66,33 +47,7 @@ intri.yml # intrinsic camera parameters, not required if the optimized folder is
 normals # prepared monocular normal maps, cameras inside: normals/00, normals/01 ...
 ```
 
-### Ref-Real and NeRF-Casting Datasets
-
-For the *Ref-Real* dataset, you can download our pre-processed version in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). For the *NeRF-Casting* dataset, you can contact the authors of [NeRF-Casting](https://dorverbin.github.io/nerf-casting/) for the dataset acquisition.
-
-If you want to prepare the datasets by yourself, please download the original *Ref-Real* dataset from the [official website](https://dorverbin.github.io/refnerf/), and contact the authors of [NeRF-Casting](https://dorverbin.github.io/nerf-casting/) for the *NeRF-Casting* dataset. After downloading, the extracted files should be placed at `data/datasets/original/ref_real` and `data/datasets/original/nerf-casting` respectively.
-
-Then, you can use the following scripts to convert the original ***COLMAP*** dataset to the ***EasyVolcap*** format, taking the *Ref-NeRF* dataset as an example:
-
-```shell
-# Convert the original Ref-NeRF dataset from COLMAP format to EasyVolcap format
-python scripts/preprocess/colmap_to_easyvolcap.py --data_root data/datasets/original/ref_real --output data/datasets/ref_real
-
-# Run the StableNormal to prepare the monocular normal maps
-python submodules/StableNormal/run.py --data_root data/datasets/ref_real
-```
-
-Note that the above command will convert all scenes in the dataset, if you only want to convert a or a few specific scenes, you can specify by setting the `--scenes` parameter (e.g., `--scenes sedan` or `--scenes sedan gardenspheres`).
-
-We have provided the dataset configurations for the *Ref-NeRF* and *NeRF-Casting* datasets in the [`configs/datasets/ref_real`](configs/datasets/ref_real) and [`configs/datasets/nerf-casting`](configs/datasets/nerf-casting) directories, and their corresponding training configurations in the [`configs/exps/envgs/ref_real`](configs/exps/envgs/ref_real) and [`configs/exps/envgs/nerf-casting`](configs/exps/envgs/nerf-casting) directories.
-
-### EnvGS Dataset
-
-For the *EnvGS* dataset, you can download it in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). We provide both ***EasyVolcap*** format and ***COLMAP*** format. The preparation is the same as above. After downloading, the ***EasyVolcap*** format extracted files should be placed at `data/datasets/envgs`, and the ***COLMAP*** format extracted files should be placed at `data/datasets/original/envgs`.
-
-### Shiny Blender Dataset
-
-For the *Shiny Blender* dataset, you can download our processed ***EasyVolcap*** format version in this [Google Drive link](https://drive.google.com/file/d/1m5xxViYnneMKv-0sy-3d9g_KNRi6KqfE/view?usp=drive_link), or you can convert the original dataset using the [script](scripts/preprocess/blender_to_easyvolcap.py). The downloaded or converted dataset should be placed at `data/datasets/refnerf/shiny_blender`.
+We have provided the dataset configurations for the *Ref-NeRF*  in the [`configs/datasets/ref_real`](configs/datasets/ref_real) and , and their corresponding training configurations in the [`configs/exps/envgs/ref_real`](configs/exps/envgs/ref_real)
 
 
 ## Usage
@@ -101,61 +56,15 @@ For the *Shiny Blender* dataset, you can download our processed ***EasyVolcap***
 
 You can download our pre-trained models from this [Google Drive link](https://drive.google.com/drive/folders/1p3bohsSSVf1mP3K26Sy47nm1Fl_YvE7I?usp=sharing). After downloading, place them into `data/trained_model` (e.g., `data/trained_model/envgs/envgs/envgs_audi/latest.pt`).
 
-Note: The pre-trained models were created with the release codebase. This code base and corresponding environment has been cleaned up and includes bug fixes, hence the metrics you get from evaluating them will differ from those in the paper.
-
-Here we provide their naming conventions, which correspond to their respective config files:
-
-+ `envgs/envgs/envgs_audi` (without any postfixes) is the EnvGS model trained on `audi` scene of the *EnvGS* dataset, corresponds to the experiment config [`configs/exps/envgs/envgs/envgs_audi.yaml`](configs/exps/envgs/envgs/envgs_audi.yaml).
-+ `envgs/ref_real/envgs_spheres` (without any postfixes) is the EnvGS model trained on `gardenspheres` scene of the *Ref-Real* dataset, corresponds to the experiment config [`configs/exps/envgs/ref_real/envgs_spheres.yaml`](configs/exps/envgs/ref_real/envgs_spheres.yaml).
-
 After placing the models and datasets in their respective places, you can run ***EasyVolcap*** with their corresponding experiment configs located in [`configs/exps/envgs`](configs/exps/envgs) to perform rendering operations with ***EnvGS***.
 
 For example, to render the `audi` scene of the *EnvGS* dataset, you can run:
 
 ```shell
-# Testing with input views and evaluating metrics
-evc-test -c configs/exps/envgs/envgs/envgs_audi.yaml # Only rendering some selected testing views and frames
-
-# Rendering a rotating novel view path
-evc-test -c configs/exps/envgs/envgs/envgs_audi.yaml,configs/specs/cubic.yaml # Render a cubic novel view path, simple interpolation
-evc-test -c configs/exps/envgs/envgs/envgs_audi.yaml,configs/specs/spiral.yaml # Render a spiral novel view path
-evc-test -c configs/exps/envgs/envgs/envgs_audi.yaml,configs/specs/orbit.yaml # Render an orbit novel view path
-
-# Rendering an existing novel view path
-evc-test -c configs/exps/envgs/envgs/envgs_audi.yaml,configs/specs/spiral.yaml exp_name=envgs/envgs/envgs_audi val_dataloader_cfg.dataset_cfg.render_size=-1,-1 val_dataloader_cfg.dataset_cfg.render_size_default=-1,-1 val_dataloader_cfg.dataset_cfg.camera_path_intri=data/path/envgs/audi/d4/intri.yml val_dataloader_cfg.dataset_cfg.camera_path_extri=data/path/envgs/audi/d4/extri.yml val_dataloader_cfg.dataset_cfg.n_render_views=480 val_dataloader_cfg.dataset_cfg.interp_type=NONE val_dataloader_cfg.dataset_cfg.interp_cfg.smoothing_term=-1.0 runner_cfg.visualizer_cfg.video_fps=30 runner_cfg.visualizer_cfg.save_tag=path # the result will be saved at data/novel_view/
-
-# GUI Rendering
-evc-gui -c configs/exps/envgs/envgs/envgs_audi.yaml viewer_cfg.window_size=540,960
-```
-
-For rendering an existing novel view camera path, you can download our provided novel view camera path for each scene at the [Google Drive link](https://drive.google.com/drive/folders/1IzsRa1PdPUn1O15zEBeOGvxToZSZpZ_w?usp=drive_link). NOTE: This is the same novel view camera path we show in our [Project Page](https://zju3dv.github.io/envgs).
-
-### Training
-
-If you want to train the model on the provided datasets or custom datasets yourself. First, you need to prepare the dataset, check [Datasets Section](#datasets) for the official evaluation datasets preparation and [Custom Datasets section](#Custom Datasets) for custom datasets preparation.
-
-Once the dataset is prepared, you can start training the EnvGS model. The training configurations are provided in the [`configs/exps/envgs`](configs/exps/envgs) directory.
-
-We provide some examples below:
-
-```shell
-# Train on the Ref-Real dataset
 evc-train -c configs/exps/envgs/ref_real/envgs_sedan.yaml exp_name=envgs/ref_real/envgs_sedan # sedan
-evc-train -c configs/exps/envgs/ref_real/envgs_spheres.yaml exp_name=envgs/ref_real/envgs_spheres # spheres
-evc-train -c configs/exps/envgs/ref_real/envgs_toycar.yaml exp_name=envgs/ref_real/envgs_toycar # toycar
-
-# Train on the EnvGS dataset
-evc-train -c configs/exps/envgs/envgs/envgs_audi.yaml exp_name=envgs/envgs/envgs_audi # audi
-evc-train -c configs/exps/envgs/envgs/envgs_dog.yaml exp_name=envgs/envgs/envgs_dog # dog
-
-# Train on the NeRF-Casting dataset, you need to acquire the original dataset first
-evc-train -c configs/exps/envgs/nerf-casting/envgs_compact.yaml exp_name=envgs/nerf-casting/envgs_compact
-evc-train -c configs/exps/envgs/nerf-casting/envgs_grinder.yaml exp_name=envgs/nerf-casting/envgs_grinder
-evc-train -c configs/exps/envgs/nerf-casting/envgs_hatchback.yaml exp_name=envgs/nerf-casting/envgs_hatchback
-evc-train -c configs/exps/envgs/nerf-casting/envgs_toaster.yaml exp_name=envgs/nerf-casting/envgs_toaster
+evc-test -c configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml 
 ```
 
-We provide the complete training scripts for ***EnvGS*** in the [`scripts/envgs`](scripts/envgs). You can run these scripts to train ***EnvGS*** on the *Ref-Real*, *EnvGS*, and *NeRF-Casting* datasets.
 
 Please pay attention to the console logs and keep an eye out for the loss and metrics. All records and training time evalutions will be saved to `data/record` and `data/result` respectively. So, launch your tensorboard or other viewing tools for training inspection.
 
@@ -333,10 +242,9 @@ You'll notice I placed the configurations in an order of `base`, `model`, `datas
 
 This work is implemented using our PyTorch framework, [EasyVolcap](https://github.com/zju3dv/EasyVolcap), feel free to explore it.
 
-- [EasyVolcap: Accelerating Neural Volumetric Video Research](https://github.com/zju3dv/EasyVolcap)
 
 We would also like to acknowledge the following inspiring prior work:
-
+- [EasyVolcap: Accelerating Neural Volumetric Video Research](https://github.com/zju3dv/EasyVolcap)
 - [NeRF-Casting: Improved View-Dependent Appearance with Consistent Reflections](https://dorverbin.github.io/nerf-casting/)
 - [3D Gaussian Ray Tracing: Fast Tracing of Particle Scenes](https://gaussiantracer.github.io/)
 - [Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields](https://dorverbin.github.io/refnerf/)
