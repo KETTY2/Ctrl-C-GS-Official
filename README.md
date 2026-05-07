@@ -56,9 +56,9 @@ We have provided the dataset configurations for the *Ref-NeRF*  in the [`configs
 
 You can download our pre-trained models from this [Google Drive link](https://drive.google.com/drive/folders/1p3bohsSSVf1mP3K26Sy47nm1Fl_YvE7I?usp=sharing). After downloading, place them into `data/trained_model` (e.g., `data/trained_model/envgs/envgs/envgs_audi/latest.pt`).
 
-After placing the models and datasets in their respective places, you can run ***EasyVolcap*** with their corresponding experiment configs located in [`configs/exps/envgs`](configs/exps/envgs) to perform rendering operations with ***EnvGS***.
+After placing the models and datasets in their respective places, you can run ***EasyVolcap*** with their corresponding experiment configs located in [`configs/exps/envgs`](configs/exps/envgs) to perform rendering operations with ***Ctrl-C gaussian splatting***.
 
-For example, to render the `audi` scene of the *EnvGS* dataset, you can run:
+For example, to render the `sedan` scene of the *Refreal* dataset, you can run:
 
 ```shell
 evc-train -c configs/exps/envgs/ref_real/envgs_sedan.yaml exp_name=envgs/ref_real/envgs_sedan # sedan
@@ -67,8 +67,6 @@ evc-test -c configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml
 
 
 Please pay attention to the console logs and keep an eye out for the loss and metrics. All records and training time evalutions will be saved to `data/record` and `data/result` respectively. So, launch your tensorboard or other viewing tools for training inspection.
-
-For preparation and training on custom datasets, you can follow the instructions in the [Custom Datasets Section](#custom-datasets), and then run the training and rendering commands specified above.
 
 <details> <summary> Some useful parameters you can explore with, good luck with them </summary>
 
