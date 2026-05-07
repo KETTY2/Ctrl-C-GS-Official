@@ -1,0 +1,683 @@
+
+===== iter 0 =====
+
+===== iter 0 =====
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.942495 mean=0.114364 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.942495 mean=0.114364 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(143710, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(143710, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.156806 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.156806 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.792820 max=0.857923 mean=0.840530 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(447556, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(447556, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.196990 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.196990 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.802304 max=0.881125 mean=0.867537 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(722220, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(722220, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.130652 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.130652 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.899060 mean=0.884207 neg=0 nan=0 inf=0
+
+===== iter 4000 =====
+ shape=(579999, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(579999, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.112557 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.112557 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.766337 max=0.972521 mean=0.945555 neg=0 nan=0 inf=0
+
+===== iter 5000 =====
+ shape=(650168, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(650168, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.124341 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.124341 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.768810 max=0.959631 mean=0.944062 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.647311 mean=0.065571 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.647311 mean=0.065571 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(144585, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(144585, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.213781 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.213781 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.799723 max=0.862290 mean=0.855267 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(453421, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(453421, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.304655 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.304655 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.880463 mean=0.858538 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(726958, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(726958, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.295523 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.295523 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.896583 mean=0.865597 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.603126 mean=0.033225 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.603126 mean=0.033225 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(146661, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(146661, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.102302 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.102302 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.792549 max=0.858193 mean=0.840853 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(461559, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(461559, 1) min=0.900000 max=0.900000 mean=0.899999 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.136047 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.136047 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.799682 max=0.879932 mean=0.870517 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(739855, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(739855, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.134948 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.134948 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.895870 mean=0.884580 neg=0 nan=0 inf=0
+
+===== iter 4000 =====
+ shape=(611949, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(611949, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.084543 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.084543 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.837045 max=0.978910 mean=0.971974 neg=0 nan=0 inf=0
+
+===== iter 5000 =====
+ shape=(684452, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(684452, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.174982 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.174982 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.811106 max=0.975505 mean=0.965801 neg=0 nan=0 inf=0
+
+===== iter 6000 =====
+ shape=(766099, 1) min=2.197224 max=2.197224 mean=2.197223 neg=0 nan=0 inf=0
+ shape=(766099, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.145321 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.145321 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.975473 mean=0.958929 neg=0 nan=0 inf=0
+
+===== iter 7000 =====
+ shape=(725413, 1) min=2.197224 max=2.197224 mean=2.197223 neg=0 nan=0 inf=0
+ shape=(725413, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.113646 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.113646 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.820673 max=0.982263 mean=0.960147 neg=0 nan=0 inf=0
+
+===== iter 8000 =====
+ shape=(807036, 1) min=2.197224 max=2.197224 mean=2.197223 neg=0 nan=0 inf=0
+ shape=(807036, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.229782 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.229782 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.816505 max=0.981142 mean=0.966919 neg=0 nan=0 inf=0
+
+===== iter 9000 =====
+ shape=(884489, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(884489, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.189902 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.189902 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.981077 mean=0.963813 neg=0 nan=0 inf=0
+
+===== iter 10000 =====
+ shape=(792777, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(792777, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.080995 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.080995 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.986062 mean=0.961221 neg=0 nan=0 inf=0
+
+===== iter 11000 =====
+ shape=(878047, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(878047, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.138310 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.138310 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.823238 max=0.982875 mean=0.956721 neg=0 nan=0 inf=0
+
+===== iter 12000 =====
+ shape=(956526, 1) min=2.197224 max=2.197224 mean=2.197223 neg=0 nan=0 inf=0
+ shape=(956526, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.160986 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.160986 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.981693 mean=0.957358 neg=0 nan=0 inf=0
+
+===== iter 13000 =====
+ shape=(907304, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(907304, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.140158 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.140158 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.831232 max=0.987568 mean=0.962570 neg=0 nan=0 inf=0
+
+===== iter 14000 =====
+ shape=(992190, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(992190, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.091002 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.091002 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.822781 max=0.985586 mean=0.963051 neg=0 nan=0 inf=0
+
+===== iter 15000 =====
+ shape=(1073423, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1073423, 1) min=0.900000 max=0.900000 mean=0.899999 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.109477 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.109477 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.985219 mean=0.962955 neg=0 nan=0 inf=0
+
+===== iter 16000 =====
+ shape=(989452, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(989452, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.084453 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.084453 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.832212 max=0.988980 mean=0.949209 neg=0 nan=0 inf=0
+
+===== iter 17000 =====
+ shape=(1083526, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1083526, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.241470 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.241470 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.986861 mean=0.957993 neg=0 nan=0 inf=0
+
+===== iter 18000 =====
+ shape=(1171528, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1171528, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.098570 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.098570 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.986484 mean=0.941715 neg=0 nan=0 inf=0
+
+===== iter 19000 =====
+ shape=(1081451, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1081451, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.168431 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.168431 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.851187 max=0.990704 mean=0.972732 neg=0 nan=0 inf=0
+
+===== iter 20000 =====
+ shape=(1186655, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1186655, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.162686 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.162686 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.820361 max=0.989279 mean=0.974804 neg=0 nan=0 inf=0
+
+===== iter 21000 =====
+ shape=(1289312, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1289312, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.240253 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.240253 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.989400 mean=0.972338 neg=0 nan=0 inf=0
+
+===== iter 22000 =====
+ shape=(1150938, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1150938, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.086533 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.086533 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.828729 max=0.992119 mean=0.966484 neg=0 nan=0 inf=0
+
+===== iter 23000 =====
+ shape=(1278291, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1278291, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.310532 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.310532 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.831061 max=0.990542 mean=0.956264 neg=0 nan=0 inf=0
+
+===== iter 24000 =====
+ shape=(1405422, 1) min=2.197224 max=2.197224 mean=2.197223 neg=0 nan=0 inf=0
+ shape=(1405422, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.151254 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.151254 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.989974 mean=0.950607 neg=0 nan=0 inf=0
+
+===== iter 25000 =====
+ shape=(1343729, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1343729, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.142617 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.142617 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.814059 max=0.991457 mean=0.969361 neg=0 nan=0 inf=0
+
+===== iter 26000 =====
+ shape=(1711061, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1711061, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.244698 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.244698 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.832452 max=0.992861 mean=0.968475 neg=0 nan=0 inf=0
+
+===== iter 27000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.083528 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.083528 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.994371 mean=0.987848 neg=0 nan=0 inf=0
+
+===== iter 28000 =====
+ shape=(1622220, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1622220, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.117161 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.117161 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.810462 max=0.994823 mean=0.976967 neg=0 nan=0 inf=0
+
+===== iter 29000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.097773 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.097773 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.811087 max=0.995691 mean=0.979356 neg=0 nan=0 inf=0
+
+===== iter 30000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.113181 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.113181 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.996487 mean=0.969200 neg=0 nan=0 inf=0
+
+===== iter 31000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.213576 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.213576 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.807190 max=0.997436 mean=0.992200 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.569410 mean=0.058251 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.569410 mean=0.058251 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(149808, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(149808, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.999874 mean=0.139351 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.999874 mean=0.139351 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.805332 max=0.852801 mean=0.846555 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(470058, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(470058, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.205460 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.205460 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.801377 max=0.871031 mean=0.847534 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(743301, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(743301, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.162114 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.162114 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.888086 mean=0.862488 neg=0 nan=0 inf=0
+
+===== iter 4000 =====
+ shape=(550301, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(550301, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.186674 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.186674 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.816988 max=0.982929 mean=0.964269 neg=0 nan=0 inf=0
+
+===== iter 5000 =====
+ shape=(615545, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(615545, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.064958 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.064958 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.796855 max=0.973457 mean=0.958002 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.473985 mean=0.018232 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.473985 mean=0.018232 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.209689 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.209689 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(147655, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(147655, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.264141 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.264141 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.803439 max=0.854542 mean=0.846947 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(457018, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(457018, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.209443 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.209443 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.805033 max=0.878054 mean=0.868840 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(730437, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(730437, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.264971 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.264971 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.894461 mean=0.884698 neg=0 nan=0 inf=0
+
+===== iter 4000 =====
+ shape=(542239, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(542239, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.202275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.202275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.824368 max=0.983913 mean=0.967445 neg=0 nan=0 inf=0
+
+===== iter 5000 =====
+ shape=(602605, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(602605, 1) min=0.900000 max=0.900000 mean=0.899999 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.071089 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.071089 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.786583 max=0.974728 mean=0.953376 neg=0 nan=0 inf=0
+
+===== iter 6000 =====
+ shape=(693376, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(693376, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.111699 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.111699 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.963859 mean=0.937662 neg=0 nan=0 inf=0
+
+===== iter 7000 =====
+ shape=(614193, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(614193, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.071212 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.071212 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.788186 max=0.965707 mean=0.953178 neg=0 nan=0 inf=0
+
+===== iter 8000 =====
+ shape=(727055, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(727055, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.117614 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.117614 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.772458 max=0.949086 mean=0.926170 neg=0 nan=0 inf=0
+
+===== iter 9000 =====
+ shape=(896239, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(896239, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.106895 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.106895 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.933017 mean=0.919106 neg=0 nan=0 inf=0
+
+===== iter 10000 =====
+ shape=(711317, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(711317, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.248168 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.248168 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.754821 max=0.937376 mean=0.886859 neg=0 nan=0 inf=0
+
+===== iter 11000 =====
+ shape=(896709, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(896709, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.072545 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.072545 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.723192 max=0.919778 mean=0.878699 neg=0 nan=0 inf=0
+
+===== iter 12000 =====
+ shape=(1275646, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1275646, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.200815 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.200815 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.903173 mean=0.878697 neg=0 nan=0 inf=0
+
+===== iter 13000 =====
+ shape=(817893, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(817893, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.059275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.059275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.713621 max=0.910073 mean=0.886122 neg=0 nan=0 inf=0
+
+===== iter 14000 =====
+ shape=(1107448, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1107448, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.069582 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.069582 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.692957 max=0.892300 mean=0.849763 neg=0 nan=0 inf=0
+
+===== iter 15000 =====
+ shape=(1701460, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1701460, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.181157 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.181157 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.876360 mean=0.827902 neg=0 nan=0 inf=0
+
+===== iter 16000 =====
+ shape=(927050, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(927050, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.234092 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.234092 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.682250 max=0.884076 mean=0.845512 neg=0 nan=0 inf=0
+
+===== iter 17000 =====
+ shape=(1338229, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1338229, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.211275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.211275 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.671803 max=0.867229 mean=0.814249 neg=0 nan=0 inf=0
+
+===== iter 18000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.330254 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.330254 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.853635 mean=0.816098 neg=0 nan=0 inf=0
+
+===== iter 19000 =====
+ shape=(964752, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(964752, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.254521 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.254521 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.660147 max=0.861550 mean=0.829483 neg=0 nan=0 inf=0
+
+===== iter 20000 =====
+ shape=(1422029, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1422029, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.220611 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.220611 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.628614 max=0.845133 mean=0.821405 neg=0 nan=0 inf=0
+
+===== iter 21000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.321734 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.321734 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.831933 mean=0.814839 neg=0 nan=0 inf=0
+
+===== iter 22000 =====
+ shape=(989051, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(989051, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.112567 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.112567 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.628088 max=0.841913 mean=0.820583 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000150 max=0.913867 mean=0.130212 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000150 max=0.913867 mean=0.130212 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(143556, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(143556, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.151496 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.151496 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.778409 max=0.864642 mean=0.844867 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(441214, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(441214, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.242634 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.242634 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.775793 max=0.885841 mean=0.860817 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.916509 mean=0.056568 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.916509 mean=0.056568 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(143580, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(143580, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.238088 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.238088 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.795468 max=0.852684 mean=0.835312 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(438271, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(438271, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.155324 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.155324 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.802522 max=0.872055 mean=0.861104 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(704857, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(704857, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.230814 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.230814 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.891012 mean=0.882743 neg=0 nan=0 inf=0
+
+===== iter 0 =====
+ shape=(71759, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(71759, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.914014 mean=0.096418 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=0.914014 mean=0.096418 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.500000 mean=0.500000 neg=0 nan=0 inf=0
+
+===== iter 1000 =====
+ shape=(148630, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(148630, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.249796 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.249796 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.808347 max=0.857200 mean=0.848908 neg=0 nan=0 inf=0
+
+===== iter 2000 =====
+ shape=(460492, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(460492, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.322278 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.322278 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.814035 max=0.875822 mean=0.869800 neg=0 nan=0 inf=0
+
+===== iter 3000 =====
+ shape=(734898, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(734898, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.196239 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.196239 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.892670 mean=0.882461 neg=0 nan=0 inf=0
+
+===== iter 4000 =====
+ shape=(580660, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(580660, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.070419 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.070419 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.759352 max=0.934295 mean=0.863617 neg=0 nan=0 inf=0
+
+===== iter 5000 =====
+ shape=(652321, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(652321, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.177507 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.177507 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.762503 max=0.926128 mean=0.890121 neg=0 nan=0 inf=0
+
+===== iter 6000 =====
+ shape=(757275, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(757275, 1) min=0.900000 max=0.900000 mean=0.899999 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.104246 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.104246 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.916525 mean=0.863202 neg=0 nan=0 inf=0
+
+===== iter 7000 =====
+ shape=(644534, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(644534, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.093439 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.093439 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.756668 max=0.924007 mean=0.880411 neg=0 nan=0 inf=0
+
+===== iter 8000 =====
+ shape=(793090, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(793090, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.166222 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.166222 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.725649 max=0.907118 mean=0.861467 neg=0 nan=0 inf=0
+
+===== iter 9000 =====
+ shape=(1042282, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1042282, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.214078 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.214078 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.889957 mean=0.815603 neg=0 nan=0 inf=0
+
+===== iter 10000 =====
+ shape=(742475, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(742475, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.250721 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.250721 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.669331 max=0.896658 mean=0.830221 neg=0 nan=0 inf=0
+
+===== iter 11000 =====
+ shape=(1006756, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1006756, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.146588 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.146588 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.699147 max=0.874439 mean=0.836174 neg=0 nan=0 inf=0
+
+===== iter 12000 =====
+ shape=(1551117, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1551117, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.152747 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.152747 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.857795 mean=0.839730 neg=0 nan=0 inf=0
+
+===== iter 13000 =====
+ shape=(912900, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(912900, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.230426 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.230426 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.633281 max=0.863398 mean=0.802510 neg=0 nan=0 inf=0
+
+===== iter 14000 =====
+ shape=(1444122, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1444122, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.451351 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.451351 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.613079 max=0.841688 mean=0.823335 neg=0 nan=0 inf=0
+
+===== iter 15000 =====
+ shape=(1800000, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1800000, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.075262 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.075262 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.500000 max=0.825101 mean=0.785100 neg=0 nan=0 inf=0
+
+===== iter 16000 =====
+ shape=(988244, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(988244, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.132491 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.132491 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.603490 max=0.831945 mean=0.792510 neg=0 nan=0 inf=0
+
+===== iter 17000 =====
+ shape=(1584793, 1) min=2.197224 max=2.197224 mean=2.197224 neg=0 nan=0 inf=0
+ shape=(1584793, 1) min=0.900000 max=0.900000 mean=0.900000 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.156470 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.000000 max=1.000000 mean=0.156470 neg=0 nan=0 inf=0
+ shape=(1, 1083988, 1) min=0.622221 max=0.810227 mean=0.772836 neg=0 nan=0 inf=0

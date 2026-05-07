@@ -162,6 +162,29 @@ class VolumetricVideoVisualizer:  # this should act as a base class for other ty
             if self.store_ground_truth and 'msk' in batch:
                 img_gt = batch.msk.expand(batch.msk.shape[:-1] + (3,))
 
+        elif type == Visualization.NEIGHBOR_EFFECT:
+            if 'neighbor_effect_map' not in output: return None, None, None
+            img = output.neighbor_effect_map.expand(output.neighbor_effect_map.shape[:-1] + (3,))
+            if self.store_ground_truth and 'msk' in batch:
+                img_gt = batch.msk.expand(batch.msk.shape[:-1] + (3,))
+
+        elif type == Visualization.NEIGHBOR_PERCENT:
+            if 'neighbor_percent_map' not in output: return None, None, None
+            img = output.neighbor_percent_map.expand(output.neighbor_percent_map.shape[:-1] + (3,))
+            if self.store_ground_truth and 'msk' in batch:
+                img_gt = batch.msk.expand(batch.msk.shape[:-1] + (3,))
+        elif type == Visualization.NEIGHBOR_INDIRECT:
+            if 'neighbor_indirect_map' not in output: return None, None, None
+            img = output.neighbor_indirect_map.expand(output.neighbor_indirect_map.shape[:-1] + (3,))
+            if self.store_ground_truth and 'msk' in batch:
+                img_gt = batch.msk.expand(batch.msk.shape[:-1] + (3,))
+
+        elif type == Visualization.REF_LIGHT:
+            if 'ref_light_map' not in output: return None, None, None
+            img = output.ref_light_map.expand(output.ref_light_map.shape[:-1] + (3,))
+            if self.store_ground_truth and 'msk' in batch:
+                img_gt = batch.msk.expand(batch.msk.shape[:-1] + (3,))
+
         elif type == Visualization.FLOW:
             if 'flo_map' not in output: return None, None, None
             from torchvision.utils import flow_to_image
@@ -195,6 +218,11 @@ class VolumetricVideoVisualizer:  # this should act as a base class for other ty
             img = output.rgb_map
             if self.store_ground_truth and 'rgb' in batch:
                 img_gt = batch.rgb
+
+        elif type == Visualization.DIF_RGB:
+            if 'dif_rgb_map' not in output: return None, None, None
+            img = output.dif_rgb_map
+
 
         elif type == Visualization.SRCINPS:
             # src_inps, only for per-command visualization

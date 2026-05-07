@@ -64,16 +64,6 @@ commentjson
 nvitop
 gpustat @ git+https://github.com/wookayin/gpustat
 # for winding_number_remesh
-nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast
-torchmcubes @ git+https://github.com/tatsy/torchmcubes
-# cholespy @ git+https://github.com/dendenxu/cholespy
-# installing from conda leads to just numerous problems...
-# NOTE: IMPORTANT
-pytorch3d @ git+https://github.com/facebookresearch/pytorch3d
-detectron2 @ git+https://github.com/facebookresearch/detectron2
-# git+https://github.com/dendenxu/large-steps-pytorch # FIXME: FIX THIS
-# git+https://github.com/dendenxu/bvh-ray-tracing # FIXME: FIX THIS
-# git+https://github.com/YuliangXiu/bvh-distance-queries
 
 # external dependency: easymocap-public (this repo is not publicly available yet)
 # for easymocap's vposer: human_pose_prior, this looks like my DotDict implementation... just way more complex
@@ -108,22 +98,8 @@ glfw
 PyGLM
 pyperclip
 clang-format
-imgui-bundle
 opencv-contrib-python
 
-# MARK: The torchvision version has a memory leak
-# https://github.com/pytorch/vision/issues/4378
-# pynvjpeg
-
-# MARK: Requires some compiling and may easily fail, but not needed for most of the implementations
-tinycudann @ git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
-
-# MARK: prone to change pytorch version, please install these on demand and manually
-# spconv-cu118
-# functorch
-torch-scatter
-# torch-sparse
-# torch-geometric
 
 # pip install -e . --no-build-isolation --no-deps
 
@@ -143,14 +119,5 @@ pymeshlab
 # For encode jpeg
 pyturbojpeg
 
-# For gaussian
-simple_knn @ git+https://gitlab.inria.fr/bkerbl/simple-knn
-# diff_gauss @ git+https://github.com/dendenxu/diff-gaussian-rasterization
-# diff_gaussian_rasterization @ git+https://github.com/graphdeco-inria/diff-gaussian-rasterization
-# diff_gauss @ git+https://github.com/slothfulxtx/diff-gaussian-rasterization
-# diff_point_rasterization @ git+https://github.com/dendenxu/diff-point-rasterization # rasterization of 4k4d's point representation, gradient might still crash
-# diff_mip_rasterization @ git+https://github.com/dendenxu/diff-mip-rasterization
-# TODO: Figure out a way to install taichi-nightly both from pip install -r and xargs
-# -i https://pypi.taichi.graphics/simple taichi-nightly
 # taichi-splatting # depends on nightly build of taichi, install later than that one
 # gsplat @ git+https://github.com/dendenxu/gsplat # more aggressive numerical stability check for 4D

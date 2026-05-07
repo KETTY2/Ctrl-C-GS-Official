@@ -9,7 +9,9 @@ from easyvolcap.engine import cfg
 from easyvolcap.engine import SAMPLERS
 from easyvolcap.engine.registry import call_from_cfg
 from easyvolcap.models.networks.noop_network import NoopNetwork
+
 from easyvolcap.models.samplers.gaussian2d_sampler import Gaussian2DSampler
+
 
 from easyvolcap.utils.sh_utils import *
 from easyvolcap.utils.console_utils import *
@@ -19,7 +21,7 @@ from easyvolcap.utils.colmap_utils import load_sfm_ply, save_sfm_ply
 from easyvolcap.utils.net_utils import freeze_module, make_params, make_buffer
 from easyvolcap.utils.gaussian2d_utils import GaussianModel, render, prepare_gaussian_camera
 from easyvolcap.utils.data_utils import load_pts, export_pts, to_x, to_cuda, to_cpu, to_tensor, remove_batch
-
+from easyvolcap.utils.hash_grid import GaussianHashGrid
 
 @SAMPLERS.register_module()
 class EnvGSSampler(Gaussian2DSampler):
@@ -51,7 +53,7 @@ class EnvGSSampler(Gaussian2DSampler):
                  # Opacity and scale configs
                  env_init_occ: float = 0.1,
                  # Densify & pruning configs
-                 env_densify_from_iter: int = 500,
+                 env_densify_from_iter: int = 500,#500
                  env_densify_until_iter: int = 15000,
                  env_densification_interval: int = 100,
                  env_opacity_reset_interval: int = 3000,
@@ -73,7 +75,7 @@ class EnvGSSampler(Gaussian2DSampler):
 
                  # Reflection related parameters
                  render_reflection: bool = True,  # default is True here
-                 render_reflection_start_iter: int = 3000,  # need a initial geometry to model reflection
+                 render_reflection_start_iter: int = 3000,  #3000 need a initial geometry to model reflection
                  detach: bool = False,  # detach the reflected rays for training the reflection model
 
                  # Ray tracing configs
@@ -173,8 +175,17 @@ class EnvGSSampler(Gaussian2DSampler):
             xyz_lr_scheduler=self.xyz_lr_scheduler,
             render_reflection=False,
             max_gs=self.env_max_gs,
-            max_gs_threshold=self.env_max_gs_threshold
+            max_gs_threshold=self.env_max_gs_threshold,
+            neighbor_effect= 1.0
         )
+        self.hash=  GaussianHashGrid(min_cell_size=10, max_cell_size=10)
+        print("hash class:", self.hash.__class__)
+        print("hash class module:", self.hash.__class__.__module__)
+        print("update_grid bound:", self.hash.update_grid)
+        print("update_grid argcount:", self.hash.update_grid.__func__.__code__.co_argcount)
+        print("update_grid varnames:", self.hash.update_grid.__func__.__code__.co_varnames)
+        self.hash.update_grid(self.pcd.get_xyz)
+        
 
         # Update `self.pipe`
         self.pipe.convert_SHs_python = True  # enable SH -> RGB conversion in Python
@@ -202,8 +213,9 @@ class EnvGSSampler(Gaussian2DSampler):
         except:
             log(yellow(f"Failed to load the point cloud from {ply_file}, generating random points."))
             xyz = sample_points_subgrid(torch.as_tensor(self.env_bounds), S, N).float()  # (P, 3)
-            rgb = torch.rand(xyz.shape, dtype=torch.float)  # (P, 3)
-            save_sfm_ply(ply_file, xyz.numpy(), (rgb.numpy() * 255.0).astype(np.uint8))
+            rgb = torch.rand(xyz.shape, dtype=torch.float) / 255.0  # (P, 3)
+            save_sfm_ply(ply_file, xyz.numpy(), rgb.numpy() * 255.0)
+
         return xyz, rgb
 
     @torch.no_grad()
@@ -229,6 +241,15 @@ class EnvGSSampler(Gaussian2DSampler):
 
         # Update the learning rate
         self.pcd.update_learning_rate(iter.item(), optimizer, prefix='sampler.pcd.')
+
+        if iter == 0 : # initialize gaussian frame 
+            pcd: GaussianModel = self.pcd
+            self.hash.update_grid(self.pcd.get_xyz)
+            idx = self.hash.sorted_indices
+            n = pcd.get_xyz.shape[0]
+
+            print("sorted_indices:", idx.shape, idx.dtype, idx.device)
+            print("num_points:", n)
 
         # Increase the levels of SHs every `self.sh_update_iter=1000` iterations until a maximum degree
         if iter > 0 and iter < self.densify_until_iter and iter % self.sh_update_iter == 0 and self.sh_start_iter is not None and iter > self.sh_start_iter:
@@ -273,6 +294,15 @@ class EnvGSSampler(Gaussian2DSampler):
                     self.prune_large_gs,
                     prefix='sampler.pcd.'
                 )
+                self.hash.update_grid(self.pcd.get_xyz)
+                idx = self.hash.sorted_indices
+                n = pcd.get_xyz.shape[0]
+
+                print("sorted_indices:", idx.shape, idx.dtype, idx.device)
+                print("num_points:", n)
+                
+              
+                pcd.reorder(self.hash.sorted_indices, optimizer, prefix="sampler.pcd.")
                 log(yellow_slim('Densification and pruning done! ' +
                                 f'min opacity: {pcd.get_opacity.min().item():.4f} ' +
                                 f'max opacity: {pcd.get_opacity.max().item():.4f} ' +
@@ -283,22 +313,12 @@ class EnvGSSampler(Gaussian2DSampler):
             if iter % self.opacity_reset_interval == 0:
                 # Reset the opacity of the gaussians to 0.01 (default)
                 pcd.reset_opacity(optimizer=optimizer, prefix='sampler.pcd.')
+
                 log(yellow_slim('Resetting opacity done! ' +
                                 f'min opacity: {pcd.get_opacity.min().item():.4f} ' +
                                 f'max opacity: {pcd.get_opacity.max().item():.4f}'))
                 opacity_reset_flag = True
-
-                if iter > self.opacity_reset_interval and iter > self.render_reflection_start_iter:
-                    # Reset the specular of the gaussians to 0.001 (default)
-                    pcd.reset_specular(
-                        reset_specular=self.init_specular,
-                        reset_specular_all=self.reset_specular_all,
-                        optimizer=optimizer,
-                        prefix='sampler.pcd.'
-                    )
-                    log(yellow_slim('Resetting specular done! ' +
-                                    f'min specular: {pcd.get_specular.min().item():.4f} ' +
-                                    f'max specular: {pcd.get_specular.max().item():.4f}'))
+               
 
             if self.opacity_lr0_interval > 0 and iter % self.opacity_lr0_interval == 0 and self.render_reflection_start_iter < iter <= self.normal_prop_until_iter:
                 pcd.update_learning_rate_by_name(
@@ -393,7 +413,7 @@ class EnvGSSampler(Gaussian2DSampler):
                                 f'min opacity: {env.get_opacity.min().item():.4f} ' +
                                 f'max opacity: {env.get_opacity.max().item():.4f}'))
 
-    def store_dif_gaussian_output(self, middle: dotdict, batch: dotdict):
+    def store_dif_gaussian_output(self, middle: dotdict, batch: dotdict, car_mask):
         # Reshape and permute the middle output
         middle = self.store_gaussian_output(middle, batch)
 
@@ -403,15 +423,21 @@ class EnvGSSampler(Gaussian2DSampler):
         output.dpt_map       = middle.dpt_map         # (B, P, 1)
         output.norm_map      = middle.norm_map        # (B, P, 3)
         output.dist_map      = middle.dist_map        # (B, P, 1)
+        output.neighbor_effect_map =car_mask*0.85
+        output.neighbor_percent_map =middle.neighbor_percent_map
         output.surf_norm_map = middle.surf_norm_map   # (B, P, 3)
-        output.bg_color      = torch.full_like(output.norm_map, self.bg_brightness)  # only for training and comparing with gt
-        # Reflectance related outputs
+        output.bg_color      = output.bg_color = torch.full_like(output.norm_map, self.bg_brightness) # only for training and comparing with gt
+
+        env_light = self.pcd.env_map(output.norm_map, "diffuse")
+        gaussian_envlight = env_light.mean(dim=-1, keepdim=True)
+        output.neighbor_indirect_map =gaussian_envlight
+
         if self.render_reflection and 'specular' in middle:
-            output.spec_map  = middle.spec_map        # (B, P, 1)
+            output.spec_map  = middle.spec_map    # (B, P, 1)
             output.rough_map = middle.rough_map       # (B, P, 1)
         # The diffuse RGB output
-        output.dif_rgb_map   = middle.rgb_map.clone() * (1 - output.spec_map)  # (B, P, 3), visualize the diffuse part
-        output.rgb_map       = middle.rgb_map          # (B, P, 3)
+        output.dif_rgb_map   = middle.rgb_map.clone()*gaussian_envlight   # (B, P, 3), visualize the diffuse part
+        output.rgb_map       = middle.rgb_map *gaussian_envlight  # (B, P, 3)
 
         # Don't forget the iteration number for later supervision retrieval
         output.iter = batch.meta.iter
@@ -438,7 +464,7 @@ class EnvGSSampler(Gaussian2DSampler):
         if is_specular_filtering or is_acc_filtering:
             # Only perform reflection tracing on pixels with high specular values or accumulated weights
             if is_specular_filtering:
-                ref_msk = output.spec_map[..., 0] > torch.quantile(output.spec_map[..., 0], self.specular_filtering_percent)
+                ref_msk = output.neighbor_effect_map[..., 0] > torch.quantile(output.neighbor_effect_map[..., 0], self.specular_filtering_percent)
             else:
                 ref_msk = output.acc_map[..., 0] > 0.75
             ref_o = ref_o[ref_msk][None]  # (N, S, 3)
@@ -454,7 +480,7 @@ class EnvGSSampler(Gaussian2DSampler):
         if self.detach: return ref_o.detach(), ref_d.detach()
         else: return ref_o, ref_d
 
-    def store_env_gaussian_output(self, middle: dotdict, output: dotdict, batch: dotdict):
+    def store_env_gaussian_output(self, middle: dotdict, output: dotdict,reflection_ch_envlight:torch.Tensor, batch: dotdict):
         # Reshape and permute the middle output
         middle = self.store_gaussian_output(middle, batch)
 
@@ -462,21 +488,23 @@ class EnvGSSampler(Gaussian2DSampler):
         is_specular_filtering = self.specular_filtering_start_iter > 0 and batch.meta.iter >= self.specular_filtering_start_iter
         is_acc_filtering = self.acc_filtering_start_iter > 0 and batch.meta.iter >= self.acc_filtering_start_iter
 
+        ref_light_hw1 = reflection_ch_envlight    # [H, W, 1]
+        output.ref_light_map = ref_light_hw1.reshape(1, -1, 1)       # [1, H*W, 1]
         if is_specular_filtering or is_acc_filtering:
             # Update the RGB output with the specular or accumulated weight filtering
             rgb_map = middle.rgb_map[0]
-            output.rgb_map[output.ref_msk] = (1 - output.spec_map[output.ref_msk]) * output.rgb_map[output.ref_msk] + output.spec_map[output.ref_msk] * rgb_map
+            output.rgb_map[output.ref_msk] = (1 - output.neighbor_effect_map[output.ref_msk]) * output.rgb_map[output.ref_msk] + output.neighbor_effect_map[output.ref_msk] * rgb_map * output.ref_light_map[output.ref_msk]
             ref_rgb_map = torch.zeros_like(output.rgb_map)
             ref_rgb_map[output.ref_msk] = rgb_map
             output.ref_rgb_map = ref_rgb_map  # (B, P, 3)
         else:
             # Update the RGB output with the reflection
-            output.rgb_map = (1 - output.spec_map) * output.rgb_map + output.spec_map * middle.rgb_map
+            output.rgb_map = (1 - output.neighbor_effect_map) * output.rgb_map + output.neighbor_effect_map * middle.rgb_map * output.ref_light_map
             output.ref_rgb_map = middle.rgb_map  # (B, P, 3)
-        output.ref_rgb_map = output.ref_rgb_map * output.spec_map * 2  # (B, P, 3), * 2 to make it brighter for better visualization
+        output.ref_rgb_map = output.ref_rgb_map * 2  # (B, P, 3), * 2 to make it brighter for better visualization
 
-        # Store the environment Gaussian output for supervision
-        output.env_opacity = self.env.get_opacity  # (P, 1)
+
+
         return output
 
     def forward(self, batch: dotdict):
@@ -485,6 +513,8 @@ class EnvGSSampler(Gaussian2DSampler):
         # Maybe update environment Gaussians: densification & pruning
         self.update_env_gaussians(batch)
 
+        if self.pcd.env_map is not None:
+                self.pcd.env_map.build_mips()
         # Prepare the camera transformation for Gaussian
         viewpoint_camera = to_x(prepare_gaussian_camera(batch), torch.float)
 
@@ -520,22 +550,27 @@ class EnvGSSampler(Gaussian2DSampler):
             dif_output = self.render_gaussians(
                 viewpoint_camera,
                 self.pcd,
+                self.hash,
                 self.pipe,
                 self.bg_color,
                 self.scale_mod,
-                override_color=None
+                override_color=None,
+                apply_car_mask=True
             )
 
         # Retain diffuse Gaussian gradients after updates
         # Skip saving the output if not in training mode to avoid unexpected densification skipping caused by `None` gradient
         if self.training: self.last_output = dif_output
         # Prepare output for supervision and visualization
-        output = self.store_dif_gaussian_output(dif_output, batch)
-
+        output = self.store_dif_gaussian_output(dif_output, batch,viewpoint_camera.car_mask)
+ 
         if batch.meta.iter >= self.render_reflection_start_iter:
             # Compute the reflected rays origins and directions
             ref_o, ref_d = self.get_reflect_rays(ray_o, ray_d, coords, output, batch)
+            roughness = torch.full((H, W, 1), 0.08, device=ref_d.device)
 
+            env_rgb = self.pcd.env_map(ref_d, roughness=roughness)
+            reflection_ch_envlight = env_rgb.mean(dim=-1, keepdim=True)
             # Invoke hardware ray tracer
             if self.tracing_backend == 'cpp':
                 env_output = self.diffop.render_gaussians(
@@ -559,7 +594,7 @@ class EnvGSSampler(Gaussian2DSampler):
             if self.training: self.last_output_env = env_output
 
             # Prepare output for supervision and visualization
-            output = self.store_env_gaussian_output(env_output, output, batch)
-
+            output = self.store_env_gaussian_output(env_output, output,reflection_ch_envlight, batch)
+       
         # Update the output to the batch
         batch.output.update(output)

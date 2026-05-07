@@ -19,6 +19,15 @@ class EnvGSSupervisor(VolumetricVideoSupervisor):
     def __init__(self,
                  network: nn.Module,
 
+                 car_mask_loss_weight: float = 0.0,
+                car_mask_loss_start_iter: int = 0,
+                car_mask_loss_until_iter: int = None,
+                car_mask_bce_weight: float = 1.0,
+                car_mask_dice_weight: float = 1.0,
+                car_mask_use_balanced_bce: bool = True, 
+                car_mask_gt_key: str = 'car_image_masks',
+                car_mask_valid_with_msk: bool = False,
+
                  norm_loss_weight: float = 0.0,
                  norm_loss_weight_final: float = None,
                  norm_loss_start_iter: int = 7000,
@@ -133,8 +142,87 @@ class EnvGSSupervisor(VolumetricVideoSupervisor):
         self.ref_rgb_loss_start_iter = ref_rgb_loss_start_iter
         self.ref_rgb_loss_until_iter = ref_rgb_loss_until_iter
 
+        # Car mask loss
+        self.car_mask_loss_weight = car_mask_loss_weight
+        self.car_mask_loss_start_iter = car_mask_loss_start_iter
+        self.car_mask_loss_until_iter = car_mask_loss_until_iter
+        self.car_mask_bce_weight = car_mask_bce_weight
+        self.car_mask_dice_weight = car_mask_dice_weight
+        self.car_mask_use_balanced_bce = car_mask_use_balanced_bce
+        self.car_mask_gt_key = car_mask_gt_key
+        self.car_mask_valid_with_msk = car_mask_valid_with_msk
+
         # Compute the total number of iterations
         self.total_iter = cfg.runner_cfg.epochs * cfg.runner_cfg.ep_iter
+    
+
+    def _soft_dice_loss(self,
+                        pred: torch.Tensor,
+                        target: torch.Tensor,
+                        valid: torch.Tensor = None,
+                        eps: float = 1e-6) -> torch.Tensor:
+        if valid is not None:
+            pred = pred * valid
+            target = target * valid
+
+        dims = tuple(range(1, pred.ndim))
+        inter = (pred * target).sum(dim=dims)
+        denom = pred.sum(dim=dims) + target.sum(dim=dims)
+
+        dice = (2.0 * inter + eps) / (denom + eps)
+        return 1.0 - dice.mean()
+
+    def _balanced_bce_loss(self,
+                        pred: torch.Tensor,
+                        target: torch.Tensor,
+                        valid: torch.Tensor = None,
+                        eps: float = 1e-6,
+                        max_pos_weight: float = 20.0) -> torch.Tensor:
+        pred = pred.clamp(eps, 1.0 - eps)
+        target = target.float()
+
+        if self.car_mask_use_balanced_bce:
+            with torch.no_grad():
+                if valid is not None:
+                    pos = ((target > 0.5) & (valid > 0.5)).float().sum()
+                    neg = ((target <= 0.5) & (valid > 0.5)).float().sum()
+                else:
+                    pos = (target > 0.5).float().sum()
+                    neg = (target <= 0.5).float().sum()
+
+                pos_weight = (neg / pos.clamp_min(1.0)).clamp(1.0, max_pos_weight)
+
+            bce = -(
+                pos_weight * target * torch.log(pred) +
+                (1.0 - target) * torch.log(1.0 - pred)
+            )
+        else:
+            bce = F.binary_cross_entropy(pred, target, reduction='none')
+
+        if valid is not None:
+            bce = bce * valid
+            return bce.sum() / valid.sum().clamp_min(1.0)
+
+        return bce.mean()
+
+    def _binary_iou(self,
+                    pred: torch.Tensor,
+                    target: torch.Tensor,
+                    valid: torch.Tensor = None,
+                    threshold: float = 0.5,
+                    eps: float = 1e-6) -> torch.Tensor:
+        pred_bin = pred > threshold
+        target_bin = target > 0.5
+
+        if valid is not None:
+            valid_bin = valid > 0.5
+            pred_bin = pred_bin & valid_bin
+            target_bin = target_bin & valid_bin
+
+        inter = (pred_bin & target_bin).float().sum()
+        union = (pred_bin | target_bin).float().sum()
+
+        return inter / union.clamp_min(eps)
 
     def compute_loss(self, output: dotdict, batch: dotdict, loss: torch.Tensor, scalar_stats: dotdict, image_stats: dotdict):
         if 'env_opacity' in output and self.env_opacity_loss_weight > 0:
@@ -147,6 +235,29 @@ class EnvGSSupervisor(VolumetricVideoSupervisor):
                     env_opacity_loss = l1_reg(1 - output.env_opacity)
                 scalar_stats.env_opacity_loss = env_opacity_loss
                 loss += self.env_opacity_loss_weight * env_opacity_loss
+                
+        if 'spec_map' in output and self.car_mask_loss_weight > 0:
+            if output.iter >= self.car_mask_loss_start_iter and \
+            (self.car_mask_loss_until_iter is None or output.iter < self.car_mask_loss_until_iter):
+
+                pred_mask = output.spec_map.clamp(1e-6, 1.0 - 1e-6)
+                gt_mask = output.neighbor_effect_map.detach().clamp(0.0, 1.0)
+
+                car_mask_bce = self._balanced_bce_loss(pred_mask, gt_mask, None)
+                car_mask_dice = self._soft_dice_loss(pred_mask, gt_mask, None)
+
+                car_mask_loss = (
+                    self.car_mask_bce_weight * car_mask_bce +
+                    self.car_mask_dice_weight * car_mask_dice
+                )
+
+                scalar_stats.car_mask_bce = car_mask_bce
+                scalar_stats.car_mask_dice = car_mask_dice
+                scalar_stats.car_mask_loss = car_mask_loss
+                scalar_stats.car_mask_pred_mean = pred_mask.mean().detach()
+                scalar_stats.car_mask_gt_mean = gt_mask.mean().detach()
+
+                loss += self.car_mask_loss_weight * car_mask_loss
 
         if 'norm_map' in output and 'norm' in batch and self.norm_loss_weight > 0:
             if output.iter >= self.norm_loss_start_iter and \
@@ -185,32 +296,14 @@ class EnvGSSupervisor(VolumetricVideoSupervisor):
                 scalar_stats.norm_loss = norm_loss
                 loss += self.norm_loss_weight * norm_loss
 
-        if 'norm_map' in output and 'surf_norm_map' in output and self.gs_norm_loss_weight > 0:
-            # Compute the normal consistency loss after a certain iteration
-            if output.iter >= self.gs_norm_loss_start_iter and \
-                (self.gs_norm_loss_until_iter is None or output.iter < self.gs_norm_loss_until_iter):
-
-                # Compute the normal consistency loss
-                gs_norm_loss = 1 - (output.norm_map * output.surf_norm_map).sum(dim=-1)
-                # Maybe scale the normal loss with acc_map
-                if self.use_acc_scale_gs_norm_loss:
-                    scale_acc = output.acc_map[..., 0].detach().clone()
-                    gs_norm_loss = gs_norm_loss * scale_acc
-                # Maybe scale the normal loss with inverse normalized depth
-                if self.use_dpt_scale_gs_norm_loss:
-                    if self.max_dpt_scale_percet:
-                        # Exclude the points with large depth and zero depth
-                        dpt_msk = output.dpt_map[..., 0].detach().clone() > 0
-                        dpt_msk = torch.logical_and(dpt_msk, output.dpt_map[..., 0].detach().clone() <= torch.quantile(output.dpt_map[dpt_msk], self.max_dpt_scale_percet))
-                        gs_norm_loss[~dpt_msk] = 0
-                    else:
-                        # Scale by inverse normalized depth
-                        scale_dpt = normalize_depth(output.dpt_map[..., 0].detach().clone())
-                        gs_norm_loss = gs_norm_loss * scale_dpt
-
-                gs_norm_loss = gs_norm_loss.mean()
-                scalar_stats.gs_norm_loss = gs_norm_loss
-                loss += self.gs_norm_loss_weight * gs_norm_loss
+        if 'acc_map' in output and self.msk_loss_weight > 0:
+            # Get the mask
+            if output.iter >= self.msk_loss_start_iter and \
+              (self.msk_loss_until_iter is None or output.iter < self.msk_loss_until_iter):
+                mask = torch.logical_and(batch.msk[..., 0] > 0.5, torch.norm(batch.norm, dim=-1) > 0.25)[..., None]  # (B, P, 1)
+                msk_loss = mse(output.acc_map, mask)
+                scalar_stats.msk_loss = msk_loss
+                loss += self.msk_loss_weight * msk_loss
 
         if 'acc_map' in output and self.msk_loss_weight > 0:
             # Get the mask

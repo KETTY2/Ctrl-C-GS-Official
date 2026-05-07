@@ -41,6 +41,7 @@ class Gaussian2DSampler(VolumetricVideoModule):
                  init_occ: float = 0.1,
                  bounds: List[List[float]] = [[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]],
                  spatial_scale: float = 1.0,
+                 init_neighbor : float = 0.9,
 
                  # Densify & pruning configs
                  densify_from_iter: int = 500,
@@ -136,6 +137,7 @@ class Gaussian2DSampler(VolumetricVideoModule):
         self.specular_channels = specular_channels
         self.init_specular = init_specular
         self.init_roughness = init_roughness
+        self.init_neighbor=init_neighbor
         self.use_z_depth = use_z_depth
         self.correct_pix = correct_pix
         # Placed here only to remove warnings, default disabled, only enabled for debugging use
@@ -158,7 +160,8 @@ class Gaussian2DSampler(VolumetricVideoModule):
             init_specular=self.init_specular,
             init_roughness=self.init_roughness,
             max_gs=self.max_gs,
-            max_gs_threshold=self.max_gs_threshold
+            max_gs_threshold=self.max_gs_threshold,
+            neighbor_effect= self.init_neighbor
         )
 
         # Rendering configs
@@ -291,7 +294,7 @@ class Gaussian2DSampler(VolumetricVideoModule):
         return ray_o, ray_d, coords, near, far, t
 
     @torch.no_grad()
-    def update_gaussians(self, batch: dotdict):
+    def update_gaussians(self, batch: dotdict):# no use in envgs
         if not self.training: return
 
         # Prepare global variables
@@ -352,6 +355,7 @@ class Gaussian2DSampler(VolumetricVideoModule):
                     self.prune_large_gs,
                     prefix='sampler.pcd.'
                 )
+            
                 log(yellow_slim('Densification and pruning done! ' +
                                 f'min opacity: {pcd.get_opacity.min().item():.4f} ' +
                                 f'max opacity: {pcd.get_opacity.max().item():.4f} ' +
@@ -372,9 +376,13 @@ class Gaussian2DSampler(VolumetricVideoModule):
         output.norm_map      = output.rend_normal[None].permute(0, 2, 3, 1).reshape(1, -1, output.rend_normal.shape[0])  # (B, H * W, 3)
         # Supervision results processing
         output.dist_map      = output.rend_dist[None  ].permute(0, 2, 3, 1).reshape(1, -1, output.rend_dist.shape[0]  )  # (B, H * W, 3)
-        output.surf_norm_map = output.surf_normal[None].permute(0, 2, 3, 1).reshape(1, -1, output.surf_normal.shape[0])  
+        output.surf_norm_map = output.surf_normal[None].permute(0, 2
+        , 3, 1).reshape(1, -1, output.surf_normal.shape[0])  
         output.bg_color      = torch.full_like(output.norm_map, self.bg_brightness)  # only for training and comparing with gt
-
+        if self.render_reflection and 'render_neighbor_effects' in output:
+            output.neighbor_effect_map= output.render_neighbor_effects[None].permute(0, 2, 3, 1).reshape(1, -1, output.render_neighbor_effects.shape[0])
+            output.neighbor_percent_map= output.render_neighbor_percent[None].permute(0, 2, 3, 1).reshape(1, -1, output.render_neighbor_percent.shape[0])
+            output.neighbor_indirect_map= output.render_neighbor_indirect[None].permute(0, 2, 3, 1).reshape(1, -1, output.render_neighbor_indirect.shape[0])
         # Reflection related processing
         if self.render_reflection and 'specular' in output:
             output.spec_map  = output.specular[None   ].permute(0, 2, 3, 1).reshape(1, -1, output.specular.shape[0]   )  # (B, H * W, 3)
@@ -432,6 +440,7 @@ class Gaussian2DSampler(VolumetricVideoModule):
             output = self.render_gaussians(
                 viewpoint_camera,
                 self.pcd,
+                self.hash,### new
                 self.pipe,
                 self.bg_color,
                 self.scale_mod,

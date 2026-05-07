@@ -2,7 +2,7 @@
 runner_cfg:
     visualizer_cfg:
         types: ['RENDER', 'DEPTH', 'ALPHA', 'NORMAL', 'SURFACE_NORMAL',
-                'SPECULAR', 'DIFFUSE', 'REFLECTION']
+                'SPECULAR', 'DIFFUSE', 'REFLECTION' , 'NEIGHBOR_EFFECT','NEIGHBOR_PERCENT','NEIGHBOR_INDIRECT','REF_LIGHT']
     optimizer_cfg:
         lr: 0.05 # add default lr to params of other modules
         eps: 1.e-15
@@ -14,6 +14,8 @@ runner_cfg:
             _scaling: 0.005
             _rotation: 0.001
             _specular: 0.01
+            _neighbor_effect: 0.05
+            env_map : 0.01
     scheduler_cfg:
         type: NoopLR
     epochs: 80
@@ -55,11 +57,11 @@ model_cfg:
         use_optix_tracing: True
         acc_filtering_start_iter: -1
         specular_filtering_start_iter: -1 # do not use this
-        env_sh_deg: 3
+        env_sh_deg: 3 
         env_sh_start_iter: 0
         env_densify_until_iter: 21000
         env_densification_interval: 500
-        env_opacity_reset_interval: 6000
+        env_opacity_reset_interval: 6000 
         env_densify_grad_threshold: 0.0001 # / 2
         env_prune_visibility: True
         env_min_weight_threshold: 0.1
@@ -79,6 +81,15 @@ model_cfg:
         use_dpt_scale_norm_loss: True
         perc_loss_weight: 0.01 # use perceptual loss
         perc_loss_start_iter: 21000
+ 
+        car_mask_loss_weight: 0.1
+        car_mask_loss_start_iter: 0
+        car_mask_loss_until_iter: 30000
+    
+        car_mask_bce_weight: 0.5
+        car_mask_dice_weight: 1.0
+        car_mask_use_balanced_bce: true
+        car_mask_valid_with_msk: false
 
 dataloader_cfg: &dataloader_cfg
     dataset_cfg: &dataset_cfg

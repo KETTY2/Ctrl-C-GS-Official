@@ -296,6 +296,11 @@ class Visualization(Enum):
     FEATURE = auto()  # embedder results
     SEMANTIC = auto()  # semantic nerf related
     SRCINPS = auto()  # Souce input images for image based rendering
+    NEIGHBOR_EFFECT=auto()
+    NEIGHBOR_PERCENT=auto()
+    NEIGHBOR_INDIRECT=auto()
+    DIF_RGB = auto()
+    
 
     # jacobian related
     JACOBIAN = auto()
@@ -308,7 +313,7 @@ class Visualization(Enum):
     SPECULAR = auto()
     DIFFUSE = auto()
     REFLECTION = auto()
-
+    REF_LIGHT=auto()
     # Geometry related output
     MESH = auto()
     POINT = auto()

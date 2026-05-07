@@ -3,7 +3,7 @@ import math
 import numpy as np
 from plyfile import PlyData, PlyElement
 
-import torch
+import torch 
 from torch import nn
 from torch.optim import Optimizer
 from torch.nn import functional as F
@@ -11,6 +11,8 @@ from torch.nn import functional as F
 from easyvolcap.utils.console_utils import *
 from easyvolcap.utils.sh_utils import eval_sh
 from easyvolcap.utils.net_utils import make_buffer, make_params, typed
+from easyvolcap.utils.light import EnvLight, EnvLightMip
+
 
 
 def fov2focal(fov, pixels):
@@ -62,7 +64,71 @@ def getProjectionMatrix(fovx: torch.Tensor, fovy: torch.Tensor, znear: torch.Ten
     P[2, 3] = -(zfar * znear) / (zfar - znear)
 
     return P
+def gaussian_kernel2d(kernel_size, sigma, device, dtype):
+    ax = torch.arange(kernel_size, device=device, dtype=dtype) - kernel_size // 2
+    yy, xx = torch.meshgrid(ax, ax, indexing='ij')
 
+    kernel = torch.exp(-(xx ** 2 + yy ** 2) / (2 * sigma ** 2))
+    kernel = kernel / kernel.sum()
+
+    return kernel[None, None]  # (1, 1, K, K)
+
+
+def soften_flat_car_mask(
+    car_mask,
+    H,
+    W,
+    kernel_size=21,
+    sigma=5.0,
+    keep_inside=True,
+):
+    """
+    input:
+        car_mask: (H*W, 1) or (1, H*W, 1)
+
+    return:
+        soft_mask: (1, H*W, 1)
+    """
+
+    dtype = car_mask.dtype
+    device = car_mask.device
+
+    if car_mask.ndim == 2:
+        # (H*W, 1) -> (1, H*W, 1)
+        assert car_mask.shape == (H * W, 1), car_mask.shape
+        car_mask = car_mask.unsqueeze(0)
+
+    elif car_mask.ndim == 3:
+        assert car_mask.shape == (1, H * W, 1), car_mask.shape
+
+    else:
+        raise ValueError(f"unexpected car_mask shape: {car_mask.shape}")
+
+    mask_hw = car_mask.reshape(1, H, W, 1).permute(0, 3, 1, 2).float()
+    # (1, 1, H, W)
+
+    kernel = gaussian_kernel2d(
+        kernel_size=kernel_size,
+        sigma=sigma,
+        device=device,
+        dtype=mask_hw.dtype,
+    )
+
+    pad = kernel_size // 2
+
+    soft_hw = F.conv2d(mask_hw, kernel, padding=pad)
+    soft_hw = soft_hw.clamp(0.0, 1.0)
+
+    if keep_inside:
+        soft_hw = torch.where(
+            mask_hw > 0.5,
+            torch.ones_like(soft_hw),
+            soft_hw,
+        )
+
+    soft_flat = soft_hw.permute(0, 2, 3, 1).reshape(1, H * W, 1)
+
+    return soft_flat.to(dtype)
 
 def prepare_gaussian_camera(batch):
     output = dotdict()
@@ -80,8 +146,38 @@ def prepare_gaussian_camera(batch):
     fl_y = cpu_K[1, 1]  # use cpu K
     FoVx = focal2fov(fl_x, cpu_W)
     FoVy = focal2fov(fl_y, cpu_H)
+    if 'cmsk' not in batch:
+        meta = batch.meta if 'meta' in batch else dotdict()
 
-    if 'msk' in batch: output.gt_alpha_mask = batch.msk[0]  # FIXME: whatever for now
+        def safe_get(d, k):
+            try:
+                return d[k]
+            except Exception:
+                return None
+
+        raise RuntimeError(
+            "batch has no cmsk. "
+            f"available batch keys={list(batch.keys())}, "
+            f"meta keys={list(meta.keys()) if hasattr(meta, 'keys') else None}, "
+            f"iter={safe_get(meta, 'iter')}, "
+            f"view_index={safe_get(meta, 'view_index')}, "
+            f"latent_index={safe_get(meta, 'latent_index')}, "
+            f"camera_index={safe_get(meta, 'camera_index')}, "
+            f"frame_index={safe_get(meta, 'frame_index')}, "
+            f"H={safe_get(meta, 'H')}, "
+            f"W={safe_get(meta, 'W')}"
+        )
+    if 'msk' in batch: output.gt_alpha_mask = batch.msk[0]
+    car_mask = batch.cmsk[0].float()  # (1, H*W, 1)
+    
+    output.car_mask = soften_flat_car_mask(
+        car_mask,
+        H,
+        W,
+        kernel_size=21,
+        sigma=5.0,
+        keep_inside=False,
+    )
 
     output.world_view_transform = getWorld2View(R, T).transpose(0, 1)
     output.projection_matrix = getProjectionMatrix(FoVx, FoVy, n, f).transpose(0, 1)
@@ -126,6 +222,13 @@ def scaling_inverse_activation(x):
 def opacity_activation(x):
     return torch.sigmoid(x)
 
+@torch.jit.script
+def neighbor_activation(x):
+    return torch.sigmoid(x)
+
+@torch.jit.script
+def inverse_neighbor_activation(x):
+    return torch.logit(torch.clamp(x, 1e-6, 1 - 1e-6))
 
 @torch.jit.script
 def inverse_opacity_activation(x):
@@ -261,6 +364,30 @@ def get_expon_lr_func(
 
     return helper
 
+def quat_to_normal_z(rots: torch.Tensor) -> torch.Tensor:
+    rots = F.normalize(rots, dim=-1)
+    w, x, y, z = rots.unbind(dim=-1)
+
+    normals = torch.stack([
+        2 * (x * z + w * y),
+        2 * (y * z - w * x),
+        1 - 2 * (x * x + y * y)
+    ], dim=-1)
+
+    return F.normalize(normals, dim=-1)
+
+def get_env_direction(H, W): # give world view(x,y,z)  env_map direction
+    gy, gx = torch.meshgrid(torch.linspace(0.0 + 1.0 / H, 1.0 - 1.0 / H, H, device='cuda'), 
+                            torch.linspace(-1.0 + 1.0 / W, 1.0 - 1.0 / W, W, device='cuda'),
+                            indexing='ij')
+    sintheta, costheta = torch.sin(gy*np.pi), torch.cos(gy*np.pi)
+    sinphi, cosphi = torch.sin(gx*np.pi), torch.cos(gx*np.pi)
+    env_directions = torch.stack((
+        sintheta*sinphi, 
+        costheta, 
+        -sintheta*cosphi
+        ), dim=-1)
+    return env_directions
 
 class GaussianModel(nn.Module):
     def __init__(
@@ -280,6 +407,8 @@ class GaussianModel(nn.Module):
         init_roughness: float = 0.5,
         max_gs: int = 1e6,
         max_gs_threshold: float = 0.9,
+        neighbor_effect: float =0.9
+        
     ):
         super().__init__()
 
@@ -292,14 +421,23 @@ class GaussianModel(nn.Module):
 
         # SH realte configs
         self.active_sh_degree = make_buffer(torch.full((1,), init_sh_degree, dtype=torch.long))  # save them, but need to keep a copy on cpu
-        self.cpu_active_sh_degree = self.active_sh_degree.item()
+        self.cpu_active_sh_degree = self.active_sh_degree.item() 
         self.max_sh_degree = sh_degree
 
         # Set scene spatial scale
         self.spatial_scale = spatial_scale
 
+
+        # EnvLight Settings
+        self.envmap_resolution = 128
+        self.envmap_max_roughness = 0.5
+        self.envmap_min_roughness = 0.08
+        self.env_map = None
+        self.env_H, self.env_W = 256, 512
+        self.env_directions = get_env_direction(self.env_H, self.env_W)
+
         # Initalize trainable parameters
-        self.create_from_pcd(xyz, colors, init_occ, init_scale, specular_channels, init_specular, init_roughness)
+        self.create_from_pcd(xyz, colors, init_occ, init_scale, specular_channels, init_specular, init_roughness,neighbor_effect)
         self.render_reflection = render_reflection
         self.specular_channels = specular_channels
         self.init_specular = init_specular
@@ -336,7 +474,9 @@ class GaussianModel(nn.Module):
         specular_activation=torch.sigmoid,
         specular_inverse_activation=torch.logit,
         roughness_activation=torch.sigmoid,
-        roughness_inverse_activation=torch.logit
+        roughness_inverse_activation=torch.logit,
+        neighbor_activation=torch.sigmoid,
+        neighbor_inverse_activation=torch.logit
     ):
         self.scaling_activation = getattr(torch, scaling_activation) if isinstance(scaling_activation, str) else scaling_activation
         self.opacity_activation = getattr(torch, opacity_activation) if isinstance(opacity_activation, str) else opacity_activation
@@ -350,6 +490,19 @@ class GaussianModel(nn.Module):
         self.specular_inverse_activation = getattr(torch, specular_inverse_activation) if isinstance(specular_inverse_activation, str) else specular_inverse_activation
         self.roughness_activation = getattr(torch, roughness_activation) if isinstance(roughness_activation, str) else roughness_activation
         self.roughness_inverse_activation = getattr(torch, roughness_inverse_activation) if isinstance(roughness_inverse_activation, str) else roughness_inverse_activation
+        self.neighbor_activation = getattr(torch, neighbor_activation) if isinstance(neighbor_activation, str) else neighbor_activation
+        self.neighbor_inverse_activation = getattr(torch, neighbor_inverse_activation) if isinstance(neighbor_inverse_activation, str) else neighbor_inverse_activation
+
+    def render_env_map(self, H=512):
+        if H == self.env_H:
+            directions = self.env_directions
+        else:
+            W = H * 2
+            directions = get_env_direction(H, W)
+        return  self.env_map(directions, mode="pure_env")
+    @property   
+    def get_envmap(self): 
+        return self.env_map
 
     @property
     def device(self):
@@ -370,6 +523,9 @@ class GaussianModel(nn.Module):
     @property
     def get_xyz(self):
         return self._xyz
+    @property
+    def get_neighbor_effect(self):
+        return self.neighbor_activation(self._neighbor_effect)
 
     @property
     def get_features(self):
@@ -380,7 +536,7 @@ class GaussianModel(nn.Module):
     @property
     def get_opacity(self):
         return self.opacity_activation(self._opacity)
-
+    
     @property
     def get_specular(self):
         return self.specular_activation(self._specular)
@@ -392,7 +548,7 @@ class GaussianModel(nn.Module):
     @property
     def get_max_sh_channels(self):
         return (self.max_sh_degree + 1)**2
-
+    
     def get_covariance(self, scaling_modifier=1):
         return self.covariance_activation(self.get_xyz, self.get_scaling, scaling_modifier, self.get_rotation)
 
@@ -415,7 +571,9 @@ class GaussianModel(nn.Module):
         scales: torch.Tensor = None,
         specular_channels: int = 1,
         specular: float = 1e-3,
-        roughness: float = 0.5
+        roughness: float = 0.5,
+        neighbor_effect: float=0.9,
+        car_gaussian_mask: float =0.0
     ):
         if xyz is None:
             xyz = torch.empty(1, 3, device='cuda')  # by default, init empty gaussian model on CUDA
@@ -450,12 +608,23 @@ class GaussianModel(nn.Module):
             opacities = opacities * torch.ones((xyz.shape[0], 1), dtype=torch.float)
         opacities = self.opacity_inverse_activation(opacities)
 
+        if not isinstance(neighbor_effect , torch.Tensor) or len(neighbor_effect) != len(xyz):
+            neighbor_effect= neighbor_effect * torch.ones((xyz.shape[0], 1), dtype=torch.float)
+        neighbor_effect= self.neighbor_inverse_activation(neighbor_effect)
+
+        car_gaussian_mask = car_gaussian_mask * torch.ones( (xyz.shape[0], 1), dtype=torch.float)
+
+
         self._xyz = make_params(xyz)
         self._features_dc = make_params(features[:, :, :1].transpose(1, 2).contiguous())
         self._features_rest = make_params(features[:, :, 1:].transpose(1, 2).contiguous())
         self._scaling = make_params(scales)
         self._rotation = make_params(rots)
         self._opacity = make_params(opacities)
+        self._neighbor_effect= make_params(neighbor_effect)
+
+        self.env_map= EnvLightMip(path=None, device='cuda', max_res=self.envmap_resolution, min_roughness=self.envmap_min_roughness, max_roughness=self.envmap_max_roughness).cuda()
+        self.car_gaussian_mask=make_buffer(car_gaussian_mask)
 
         if not isinstance(specular, torch.Tensor) or len(specular) != len(xyz):
             specular = specular * torch.ones((xyz.shape[0], specular_channels), dtype=torch.float)
@@ -481,7 +650,7 @@ class GaussianModel(nn.Module):
 
     def distort_color(self, range: float = 0.4, threshold: float = 0.05, optimizer: Optimizer = None, prefix: str = ''):
         log(yellow_slim(f'[DISTORT COLOR]'))
-        mask = self.get_specular.max(dim=-1).values.flatten() > threshold  # (P,)
+        mask = self.get_specular.max(dim=-1).values.flatten() > threshold
         features_dc = self._features_dc.clone()
         new_features_dc = features_dc + torch.rand_like(features_dc) * range * 2 - range
         new_features_dc[mask] = features_dc[mask]
@@ -490,7 +659,7 @@ class GaussianModel(nn.Module):
 
     def enlarge_scaling(self, ratio: float = 1.5, threshold: float = 0.02, optimizer: Optimizer = None, prefix: str = ''):
         log(yellow_slim(f'[ENLARGE SCALING] ENLARGE SCALING BY {ratio}'))
-        mask = self.get_specular.max(dim=-1).values.flatten() < threshold  # (P,)
+        mask = self.get_specular.max(dim=-1).values.flatten() > threshold  # (P,)
         new_scaling = self.scaling_inverse_activation(self.get_scaling * ratio)  # (P, 2)
         new_scaling[mask] = self._scaling[mask]  # (P, 2)
         new_scaling.grad = self._scaling.grad
@@ -507,16 +676,21 @@ class GaussianModel(nn.Module):
         if reset_specular_all: new_specular = self.specular_inverse_activation(torch.ones_like(self._specular, ) * reset_specular)
         else: new_specular = torch.min(self._specular, self.specular_inverse_activation(torch.ones_like(self._specular, ) * reset_specular))
         new_specular.grad = self._specular.grad
-        self._specular = self.replace_tensor_to_optimizer(new_specular, '_specular', optimizer, prefix)
+        self._specular = self.replace_tensor_to_optimizer(new_specular, '_specular', optimizer, prefix)# not recommand
 
     def reset_opacity(self, reset_opacity: float = 0.01, optimizer: Optimizer = None, prefix: str = ''):
         log(yellow_slim(f'[RESET OPACITY] RESET OPACITY TO {reset_opacity}'))
         new_opacity = torch.min(self._opacity, self.opacity_inverse_activation(torch.ones_like(self._opacity, ) * reset_opacity))
         self._opacity = self.replace_tensor_to_optimizer(new_opacity, '_opacity', optimizer, prefix)
 
+    
     def replace_tensor_to_optimizer(self, tensor: torch.Tensor, name: str, optimizer: Optimizer = None, prefix: str = ''):
         optimizable_tensor = None
+        
         for group in optimizer.param_groups:
+            group_name = group.get("name", f"group")
+            if group_name.startswith(f"sampler.pcd.env_map") or  group_name.startswith(f"sampler.env.env_map"):
+                continue
             if group["name"].replace(prefix, '') == name:
                 stored_state = optimizer.state.get(group['params'][0], None)
                 stored_state["exp_avg"] = torch.zeros_like(tensor)
@@ -536,8 +710,12 @@ class GaussianModel(nn.Module):
     def _prune_optimizer(self, mask: torch.Tensor, optimizer: Optimizer, prefix: str = ''):
         optimizable_tensors = {}
         for group in optimizer.param_groups:
+            group_name = group.get("name", f"group")
+            if group_name.startswith(f"sampler.pcd.env_map") or  group_name.startswith(f"sampler.env.env_map"):
+                continue
             attr = getattr(self, group["name"].replace(prefix, ''), None)
             if attr is None: continue
+
             stored_state = optimizer.state.get(group['params'][0], None)
             if stored_state is not None:
                 stored_state["exp_avg"] = stored_state["exp_avg"][mask]
@@ -563,33 +741,147 @@ class GaussianModel(nn.Module):
         optimizable_tensors = self._prune_optimizer(valid_points_mask, optimizer, prefix)
         for name, new_params in optimizable_tensors.items():
             setattr(self, name.replace(prefix, ''), new_params)
+        if valid_points_mask is not None:
+            self.car_gaussian_mask = make_buffer(
+                self.car_gaussian_mask.detach()[valid_points_mask]
+            )
 
     def cat_tensors_to_optimizer(self, tensors_dict: dotdict, optimizer: Optimizer, prefix: str = ''):
+
         optimizable_tensors = {}
-        for group in optimizer.param_groups:
+
+        for i, group in enumerate(optimizer.param_groups):
+  
             assert len(group["params"]) == 1
-            extension_tensor = tensors_dict.get(group["name"].replace(prefix, ''), None)
-            if extension_tensor is None: continue
+
+            group_name = group.get("name", f"group_{i}")
+
+            if group_name.startswith(f"sampler.pcd.env_map") or  group_name.startswith(f"sampler.env.env_map"):
+                continue
+            mapped_name = group_name.replace(prefix, '')
+            extension_tensor = tensors_dict.get(mapped_name, None)
+
+            if extension_tensor is None:
+                continue
+
             stored_state = optimizer.state.get(group['params'][0], None)
             if stored_state is not None:
+                
 
                 stored_state["exp_avg"] = torch.cat((stored_state["exp_avg"], torch.zeros_like(extension_tensor)), dim=0)
                 stored_state["exp_avg_sq"] = torch.cat((stored_state["exp_avg_sq"], torch.zeros_like(extension_tensor)), dim=0)
 
-                del optimizer.state[group['params'][0]]
-                group["params"][0] = nn.Parameter(torch.cat((group["params"][0], extension_tensor), dim=0).requires_grad_(True))
-                optimizer.state[group['params'][0]] = stored_state
+                old_param = group["params"][0]
+                new_param = nn.Parameter(torch.cat((old_param, extension_tensor), dim=0).requires_grad_(True))
 
-                optimizable_tensors[group["name"]] = group["params"][0]
+                del optimizer.state[old_param]
+                group["params"][0] = new_param
+                optimizer.state[new_param] = stored_state
+
+                optimizable_tensors[group_name] = new_param
             else:
-                group["params"][0] = nn.Parameter(torch.cat((group["params"][0], extension_tensor), dim=0).requires_grad_(True))
-                optimizable_tensors[group["name"]] = group["params"][0]
-
-        if len(optimizable_tensors) == 0:
-            log(yellow_slim(f'No optimizable tensors found in optimizer'))
-            breakpoint()
+                old_param = group["params"][0]
+                new_param = nn.Parameter(torch.cat((old_param, extension_tensor), dim=0).requires_grad_(True))
+                group["params"][0] = new_param
+                
+                optimizable_tensors[group_name] = new_param
 
         return optimizable_tensors
+    
+    def reorder_tensors_to_optimizer(
+        self,
+        sorted_indices: torch.Tensor,
+        optimizer: Optimizer,
+        prefix: str = ''
+    ):
+        """
+        Reorder only optimizer groups whose group["name"] starts with `prefix`.
+        Example:
+            prefix="sampler.pcd." -> reorder only sampler.pcd.* groups
+            prefix="sampler.env." -> reorder only sampler.env.* groups
+        """
+
+        sorted_indices = sorted_indices.long()
+        optimizable_tensors = {}
+
+        for i, group in enumerate(optimizer.param_groups):
+            group_name = group.get("name", f"group_{i}")
+            if not group_name.startswith(prefix):
+                continue
+
+            if group_name.startswith(f"{prefix}env_map"):
+                continue
+
+            assert len(group["params"]) == 1, f"{group_name}: len(params) != 1"
+
+            param = group["params"][0]
+
+            stored_state = optimizer.state.get(param, None)
+
+            reordered_param = nn.Parameter(
+                param.detach()[sorted_indices],
+                requires_grad=True
+            )
+
+            if stored_state is not None:
+                if "exp_avg" in stored_state:
+                    assert stored_state["exp_avg"].shape[0] == param.shape[0], \
+                        f"{group_name} exp_avg mismatch: {stored_state['exp_avg'].shape[0]} != {param.shape[0]}"
+                    stored_state["exp_avg"] = stored_state["exp_avg"][sorted_indices]
+
+                if "exp_avg_sq" in stored_state:
+                    assert stored_state["exp_avg_sq"].shape[0] == param.shape[0], \
+                        f"{group_name} exp_avg_sq mismatch: {stored_state['exp_avg_sq'].shape[0]} != {param.shape[0]}"
+                    stored_state["exp_avg_sq"] = stored_state["exp_avg_sq"][sorted_indices]
+
+                del optimizer.state[param]
+                group["params"][0] = reordered_param
+                optimizer.state[reordered_param] = stored_state
+            else:
+                group["params"][0] = reordered_param
+
+            optimizable_tensors[group_name] = group["params"][0]
+
+        if len(optimizable_tensors) == 0:
+            raise RuntimeError(f"No optimizer groups matched prefix={prefix!r}")
+
+        return optimizable_tensors
+
+    def reorder(self, sorted_indices: torch.Tensor, optimizer: Optimizer, prefix: str = ''):
+        """
+        Reorder only this object's parameters by filtering optimizer groups with prefix.
+        """
+        assert optimizer is not None, "optimizer must be provided"
+        assert prefix, "prefix must be provided to avoid reordering unrelated optimizer groups"
+
+        sorted_indices = sorted_indices.long()
+
+        # 
+        assert sorted_indices.dtype == torch.long
+        assert sorted_indices.numel() == self.get_xyz.shape[0], \
+            f"sorted_indices.numel()={sorted_indices.numel()} != self.get_xyz.shape[0]={self.get_xyz.shape[0]}"
+        assert sorted_indices.min().item() >= 0
+        assert sorted_indices.max().item() < self.get_xyz.shape[0], \
+            f"sorted_indices.max()={sorted_indices.max().item()} >= self.get_xyz.shape[0]={self.get_xyz.shape[0]}"
+
+        self.car_gaussian_mask = make_buffer(
+            self.car_gaussian_mask.detach()[sorted_indices]
+        )
+        optimizable_tensors = self.reorder_tensors_to_optimizer(sorted_indices, optimizer, prefix)
+
+        for full_name, new_param in optimizable_tensors.items():
+            if "env_map" in full_name:
+                continue
+            local_name = full_name[len(prefix):]
+
+            assert '.' not in local_name, \
+                f"Unexpected local_name after prefix strip: full_name={full_name}, prefix={prefix}, local_name={local_name}"
+
+            setattr(self, local_name, new_param)
+
+        self.reset_stats()
+        
+    
 
     def densification_postfix(
         self,
@@ -602,7 +894,9 @@ class GaussianModel(nn.Module):
         optimizer: Optimizer,
         prefix: str,
         new_specular: torch.Tensor = None,
-        new_roughness: torch.Tensor = None
+        new_roughness: torch.Tensor = None,
+        new_neighbor_effect: torch.Tensor = None,
+        new_car_gaussian_mask: torch.Tensor=None,
     ):
         d = dotdict({
             "_xyz": new_xyz,
@@ -611,6 +905,7 @@ class GaussianModel(nn.Module):
             "_opacity": new_opacities,
             "_scaling": new_scaling,
             "_rotation": new_rotation,
+            "_neighbor_effect": new_neighbor_effect,
         })
 
         d["_specular"] = new_specular
@@ -619,7 +914,16 @@ class GaussianModel(nn.Module):
         optimizable_tensors = self.cat_tensors_to_optimizer(d, optimizer, prefix)
         for name, new_params in optimizable_tensors.items():
             setattr(self, name.replace(prefix, ''), new_params)
-
+        if new_car_gaussian_mask is not None:
+            self.car_gaussian_mask = make_buffer(
+                torch.cat(
+                    [
+                        self.car_gaussian_mask.detach(),
+                        new_car_gaussian_mask.detach(),
+                    ],
+                    dim=0,
+                )
+            )
     def get_xyz_gradient_avg(self):
         avg = self.xyz_gradient_accum / self.denom
         avg[avg.isnan()] = 0.0
@@ -686,11 +990,19 @@ class GaussianModel(nn.Module):
         new_rotation = self._rotation[mask]
         new_specular = self._specular[mask]
         new_roughness = self._roughness[mask]
-        self.densification_postfix(new_xyz, new_features_dc, new_features_rest, new_opacities, new_scaling, new_rotation, optimizer, prefix, new_specular, new_roughness)
+        new_neigbor_effect = self._neighbor_effect[mask]
+        new_car_gaussian_mask = self.car_gaussian_mask[mask]
+        self.densification_postfix(new_xyz, new_features_dc, new_features_rest, new_opacities, new_scaling, new_rotation, optimizer, prefix, new_specular, new_roughness,new_neigbor_effect,new_car_gaussian_mask )
         self.densify_stats(mask, 1, 1.0)
+
 
     def split(self, mask, N: int = 2, optimizer: Optimizer = None, prefix: str = '', ratio: float = 0.8):
         # Split xyz
+        assert self._xyz.shape[0] == self.car_gaussian_mask.shape[0], \
+            f"before split: _xyz={self._xyz.shape}, car_gaussian_mask={self.car_gaussian_mask.shape}"
+        assert mask.shape[0] == self._xyz.shape[0], \
+            f"split mask mismatch: mask={mask.shape}, _xyz={self._xyz.shape}"
+
         stds = self.get_scaling[mask].repeat(N, 1)  # (M * N, 2), NOTE: 2DGS has only 2 scaling parameters
         stds = torch.cat([stds, torch.zeros_like(stds[:, :1])], dim=-1)  # (M * N, 3)
         means = torch.zeros_like(stds)  # (M * N, 3)
@@ -706,7 +1018,9 @@ class GaussianModel(nn.Module):
         new_opacity = self._opacity[mask].repeat(N, 1)
         new_specular = self._specular[mask].repeat(N, 1)
         new_roughness = self._roughness[mask].repeat(N, 1)
-        self.densification_postfix(new_xyz, new_features_dc, new_features_rest, new_opacity, new_scaling, new_rotation, optimizer, prefix, new_specular, new_roughness)
+        new_neigbor_effect = self._neighbor_effect[mask].repeat(N, 1)
+        new_car_gaussian_mask =self.car_gaussian_mask[mask].repeat(N, 1)
+        self.densification_postfix(new_xyz, new_features_dc, new_features_rest, new_opacity, new_scaling, new_rotation, optimizer, prefix, new_specular, new_roughness,new_neigbor_effect,new_car_gaussian_mask )
         self.densify_stats(mask, N, 1.0 / (ratio * N))
         # Prune splited points
         n_split = mask.sum().item()
@@ -898,6 +1212,7 @@ class GaussianModel(nn.Module):
             self.prune_visibility(optimizer, prefix)
         self.reset_stats()
 
+
     def add_densification_stats(self, viewspace_point_tensor, update_filter, weight_accumulate=None):
         self.denom[update_filter] += 1
 
@@ -952,13 +1267,19 @@ class GaussianModel(nn.Module):
         opacities = self._opacity[mask].detach().cpu().numpy()
         scales = self._scaling[mask].detach().cpu().numpy()
         rotation = self._rotation[mask].detach().cpu().numpy()
+        neighbor_effect= self._neighbor_effect[mask].detach().cpu().numpy()
+        car_gaussian_mask=self.car_gaussian_mask[mask].detach().cpu().numpy()
 
         dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes()]
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
-        attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scales, rotation), axis=1)
+        attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scales, rotation, neighbor_effect,car_gaussian_mask), axis=1)
         elements[:] = list(map(tuple, attributes))
         el = PlyElement.describe(elements, 'vertex')
         PlyData([el]).write(path)
+
+        if self.env_map is not None:
+            save_path = path.replace('.ply', '.map')
+            torch.save(self.env_map.state_dict(), save_path)
 
     def load_ply(self, path: str):
         plydata = PlyData.read(path)
@@ -989,30 +1310,47 @@ class GaussianModel(nn.Module):
         rots = np.zeros((xyz.shape[0], len(rot_names)))
         for idx, attr_name in enumerate(rot_names):
             rots[:, idx] = np.asarray(plydata.elements[0][attr_name])
+        neighbor_effect = np.asarray(plydata.elements[0]["neighbor_effect"])[..., np.newaxis]
 
+        car_gaussian_mask = np.asarray(plydata.elements[0]["car_gaussian_mask"])[..., np.newaxis]
+
+        map_path = path.replace('.ply', '.map')
+        if os.path.exists(map_path):
+            map_ckpt = torch.load(map_path)
+            self.env_map = EnvLightMip(path=None, device='cuda', max_res=map_ckpt['base'].shape[1]).cuda()
+            self.env_map.load_state_dict(map_ckpt)
         self._xyz = nn.Parameter(torch.tensor(xyz, dtype=torch.float, device="cuda").requires_grad_(True))
         self._features_dc = nn.Parameter(torch.tensor(features_dc, dtype=torch.float, device="cuda").transpose(1, 2).contiguous().requires_grad_(True))
         self._features_rest = nn.Parameter(torch.tensor(features_extra, dtype=torch.float, device="cuda").transpose(1, 2).contiguous().requires_grad_(True))
         self._opacity = nn.Parameter(torch.tensor(opacities, dtype=torch.float, device="cuda").requires_grad_(True))
         self._scaling = nn.Parameter(torch.tensor(scales, dtype=torch.float, device="cuda").requires_grad_(True))
         self._rotation = nn.Parameter(torch.tensor(rots, dtype=torch.float, device="cuda").requires_grad_(True))
-
+        self._neighbor_effect = nn.Parameter(torch.tensor(neighbor_effect, dtype=torch.float, device="cuda").requires_grad_(True))
+        self.car_gaussian_mask = nn.Parameter(torch.tensor(car_gaussian_mask, dtype=torch.float, device="cuda").requires_grad_(False))
         self.active_sh_degree = make_buffer(torch.full((1,), self.max_sh_degree, dtype=torch.long))
 
 
 def render(
     viewpoint_camera,
     pc: GaussianModel,
+    hash,
     pipe: dotdict,
     bg_color: torch.Tensor,
     scaling_modifier: float = 1.0,
     override_color: torch.Tensor = None,
+    apply_car_mask: bool=False,
     device: str = 'cuda'
 ):
     # Lazy import to avoid circular import
-    if pc.render_reflection and pc.specular_channels == 1: from diff_surfel_rasterization_wet_ch05 import GaussianRasterizationSettings, GaussianRasterizer
-    elif pc.render_reflection and pc.specular_channels == 3: from diff_surfel_rasterization_wet_ch07 import GaussianRasterizationSettings, GaussianRasterizer
-    else: from diff_surfel_rasterization_wet import GaussianRasterizationSettings, GaussianRasterizer
+    if pc.render_reflection and pc.specular_channels == 1: 
+
+        from diff_surfel_rasterization_wet_ch05 import GaussianRasterizationSettings, GaussianRasterizer
+    elif pc.render_reflection and pc.specular_channels == 3: 
+        from diff_surfel_rasterization_wet_ch07 import GaussianRasterizationSettings, GaussianRasterizer
+
+    else: 
+        from diff_surfel_rasterization_wet import GaussianRasterizationSettings, GaussianRasterizer
+
 
     # Create zero tensor, we will use it to make pytorch return gradients of the 2D (screen-space) means
     screenspace_points = torch.zeros_like(pc.get_xyz, requires_grad=True, device=device) + 0
@@ -1020,6 +1358,8 @@ def render(
     except: pass
 
     # Set up rasterization configuration
+
+    car_image_masks=viewpoint_camera.car_mask
     tanfovx = math.tan(viewpoint_camera.FoVx * 0.5)
     tanfovy = math.tan(viewpoint_camera.FoVy * 0.5)
     raster_settings = GaussianRasterizationSettings(
@@ -1039,8 +1379,15 @@ def render(
 
     # Get the means, opacities, and colors of the Gaussians
     means3D = pc.get_xyz
+
+    neighbor_effects= pc.get_neighbor_effect                
     means2D = screenspace_points
     opacity = pc.get_opacity
+    car_gaussian_masks=pc.car_gaussian_mask
+ 
+    starts = hash.flat_starts.to(device)
+    ends = hash.flat_ends.to(device)
+    densities = hash.flat_densities.to(device)
 
     # If precomputed 3d covariance is provided, use it
     # If not, then it will be computed from scaling / rotation by the rasterizer
@@ -1062,6 +1409,8 @@ def render(
     else:
         scales = pc.get_scaling
         rotations = pc.get_rotation
+        normals = quat_to_normal_z(rotations)
+        gaussian_envlight =None
 
     # If precomputed colors are provided, use them. Otherwise, if it is desired to precompute colors
     # from SHs in Python, do it. If not, then SH -> RGB conversion will be done by rasterizer
@@ -1079,15 +1428,17 @@ def render(
     else:
         colors_precomp = override_color
 
-    # Additional reflection-related splatting variable
-    if pc.render_reflection and colors_precomp is not None:
+    if pc.render_reflection and colors_precomp is not None :
         colors_precomp = torch.cat([colors_precomp, pc.get_specular, pc.get_roughness], dim=-1)  # (P, C+2)
     elif pc.render_reflection:
         raise ValueError('Reflection is enabled but no color is provided.')
 
     # Create the rasterizer and perform the rendering
     rasterizer = GaussianRasterizer(raster_settings=raster_settings)
+
     rendered_image, radii, allmap, weight = rasterizer(
+        gaussian_envlight,
+        neighbor_effects=neighbor_effects,
         means3D=means3D,
         means2D=means2D,
         shs=shs,
@@ -1095,7 +1446,12 @@ def render(
         opacities=opacity,
         scales=scales,
         rotations=rotations,
-        cov3D_precomp=cov3D_precomp
+        cov3D_precomp=cov3D_precomp,
+        starts=starts,
+        ends=ends,
+        densities=densities,
+        car_image_masks=car_image_masks,
+        car_gaussian_masks =  car_gaussian_masks
     )
 
     # Prepare the output dictionary
@@ -1107,13 +1463,17 @@ def render(
         ))
     # Those Gaussians that were frustum culled or had a radius of 0 were not visible.
     # They will be excluded from value updates used in the splitting criteria.
-    output.update(dotdict(
+  
+    output.update(dotdict(#
         viewspace_points=means2D,  # (P, 3)
         visibility_filter=radii>0,  # (P,)
         radii=radii,  # (P,)
         weight_accumulate=weight.detach().clone()  # (P,)
     ))
 
+    render_neighbor_effects=allmap[7:8]
+    render_neighbor_percent=allmap[8:9]
+    render_neighbor_indirect=allmap[9:10]
     # Post-process additional rendered maps for regularizations
     # Get the rendered alpha map
     render_alpha = allmap[1:2]  # (1, H, W)
@@ -1143,11 +1503,15 @@ def render(
     # Get the rendered depth distortion map
     render_distortion = allmap[6:7]  # (1, H, W)
 
+
     # Update the output dictionary
     output.update(dotdict(
         rend_alpha=render_alpha,  # (1, H, W)
         rend_normal=render_normal,  # (3, H, W)
         rend_dist=render_distortion,  # (1, H, W)
+        render_neighbor_effects=render_neighbor_effects,#new
+        render_neighbor_percent=render_neighbor_percent,#new
+        render_neighbor_indirect=render_neighbor_indirect,#new
         surf_depth=surface_depth,  # (1, H, W)
         surf_normal=surface_normal  # (3, H, W)
     ))
@@ -1155,10 +1519,11 @@ def render(
     return output
 
 
+
 def dpt2xyz(
     camera,
     dpt: torch.Tensor,
-    device: str = 'cuda'
+    device: str = 'cuda' 
 ):
     # Get the camera extrinsic matrix
     c2w = (camera.world_view_transform.T).inverse()
