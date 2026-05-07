@@ -1,7 +1,7 @@
 <div align="center">
 
 #Ctrlc gaussian splatting
-
+ 
 ## Installation
 
 This repository is built on top of [***EasyVolcap***](https://github.com/zju3dv/EasyVolcap), and [***EnvGS***](https://github.com/zju3dv/EnvGS) 
