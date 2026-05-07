@@ -25,7 +25,9 @@ pip install -e . --no-build-isolation --no-deps
 
 # Install the 2D Gaussian Tracer
 cd submodules
+rm -rf diff-surfel-tracing
 git clone https://github.com/xbillowy/diff-surfel-tracing.git --recursive
+cd
 pip install -v submodules/diff-surfel-tracing --no-build-isolation 
 
 # Install the modified 2D Gaussian rasterizers
