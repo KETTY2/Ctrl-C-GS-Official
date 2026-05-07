@@ -36,7 +36,7 @@ pip install submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet 
 
 ## Datasets
 
-In this section, we provide instructions on downloading the full dataset for *Ref-NeRF* sedan. You can download our pre-processed ***EasyVolcap*** format datasets in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). 
+In this section, we provide instructions on downloading the full dataset for *Ref-NeRF* sedan. You can download our pre-processed ***EasyVolcap*** format datasets in this [Google Drive link](https://drive.google.com/file/d/1c5Mg6PChYjNC1J2RJ7_6Jx2swrACrBXw/view?usp=sharing). 
 After downloading, the extracted files should be placed at ['data/datasets/refnerf/ref_real/sedan/`](data/datasets/refnerf/ref_real/sedan/)
 
 ***Ctrl-C*** follows the typical dataset setup of ***EasyVolcap***, where we group similar sequences into sub-directories of a particular dataset. Inside those sequences, the directory structure should generally remain the same. For example, after downloading and preparing the `sedan` sequence of the *Ref-Real* dataset, the directory structure should look like this:
@@ -58,7 +58,7 @@ We have provided the dataset configurations for the *Ref-NeRF*  in the [`configs
 
 ### Rendering
 
-You can download our pre-trained models from this [Google Drive link](https://drive.google.com/drive/folders/1p3bohsSSVf1mP3K26Sy47nm1Fl_YvE7I?usp=sharing). After downloading, place them into `data/trained_model` (e.g., `data/trained_model/envgs_sedan_ctrlc/latest.pt`).
+You can download our pre-trained models from this [Google Drive link](https://drive.google.com/file/d/1MUQ7HS3EEMWsnIbj5OAC7mpqy32BdpkR/view?usp=sharing). After downloading, place them into `data/trained_model` (e.g., `data/trained_model/envgs_sedan_ctrlc/latest.pt`).
 
 After placing the models and datasets in their respective places, you can run ***EasyVolcap*** with their corresponding experiment configs located in [`configs/exps/envgs_ctrl`](configs/exps/envgs_ctrl) to perform rendering operations with ***Ctrl-C gaussian splatting***.
 
@@ -72,7 +72,7 @@ cloning and rendering:(
 
 evc-test -c configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml 
 ```
-You can change (a,b,c) in configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml to manipulate the location the car will be rendered. The picture from the paper used a: -0.5 b: -0.6  c: 1.5 and frame0000_camera0008.png.
+You can change (a,b,c) in ['configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml`](configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml) to manipulate the location the car will be rendered. The picture from the paper used a: -0.5 b: -0.6  c: 1.5 and frame0000_camera0008.png.
 
 Please pay attention to the console logs and keep an eye out for the loss and metrics. All records and training time evalutions will be saved to `data/record` and `data/result` respectively. So, launch your tensorboard or other viewing tools for training inspection.
 
