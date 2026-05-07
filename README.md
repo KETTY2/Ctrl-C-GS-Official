@@ -37,7 +37,7 @@ pip install submodules/diff-surfel-rasterizations/diff-surfel-rasterization-wet 
 ## Datasets
 
 In this section, we provide instructions on downloading the full dataset for *Ref-NeRF* sedan. You can download our pre-processed ***EasyVolcap*** format datasets in this [Google Drive link](https://drive.google.com/drive/folders/1ogZF8171GatQokbECf1yCabBwm3IvDSm?usp=sharing). 
-After downloading, the extracted files should be placed at data/datasets/refnerf/ref_real/sedan/
+After downloading, the extracted files should be placed at ['data/datasets/refnerf/ref_real/sedan/`](data/datasets/refnerf/ref_real/sedan/)
 
 ***Ctrl-C*** follows the typical dataset setup of ***EasyVolcap***, where we group similar sequences into sub-directories of a particular dataset. Inside those sequences, the directory structure should generally remain the same. For example, after downloading and preparing the `sedan` sequence of the *Ref-Real* dataset, the directory structure should look like this:
 
@@ -68,7 +68,7 @@ For example, to render the `sedan` scene of the *Refreal* dataset, you must firs
 training:
 evc-train -c configs/exps/envgs/ref_real/envgs_sedan.yaml exp_name=envgs/ref_real/envgs_sedan # sedan
 
-cloning and rendering:
+cloning and rendering:(
 
 evc-test -c configs/exps/envgs/ref_real/envgs_sedan_ctrlc.yaml 
 ```
